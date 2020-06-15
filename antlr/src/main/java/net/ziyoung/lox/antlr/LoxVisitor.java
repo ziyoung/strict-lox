@@ -59,23 +59,17 @@ public interface LoxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMethodDeclaration(LoxParser.MethodDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LoxParser#blockStatement}.
+	 * Visit a parse tree produced by {@link LoxParser#functionPart}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBlockStatement(LoxParser.BlockStatementContext ctx);
+	T visitFunctionPart(LoxParser.FunctionPartContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LoxParser#statement}.
+	 * Visit a parse tree produced by {@link LoxParser#modifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatement(LoxParser.StatementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LoxParser#expressionStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpressionStatement(LoxParser.ExpressionStatementContext ctx);
+	T visitModifier(LoxParser.ModifierContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LoxParser#typeParameters}.
 	 * @param ctx the parse tree
@@ -95,17 +89,127 @@ public interface LoxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitType(LoxParser.TypeContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link LoxParser#blockStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlockStatement(LoxParser.BlockStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LoxParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatement(LoxParser.StatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LoxParser#expressionStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionStatement(LoxParser.ExpressionStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LoxParser#ifStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStatement(LoxParser.IfStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LoxParser#elseBranch}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseBranch(LoxParser.ElseBranchContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LoxParser#forStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForStatement(LoxParser.ForStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LoxParser#initPart}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInitPart(LoxParser.InitPartContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LoxParser#conditionPart}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConditionPart(LoxParser.ConditionPartContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LoxParser#updatePart}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUpdatePart(LoxParser.UpdatePartContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LoxParser#returnStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReturnStatement(LoxParser.ReturnStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link LoxParser#variableDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitVariableDeclaration(LoxParser.VariableDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LoxParser#expression}.
+	 * Visit a parse tree produced by the {@code Group}
+	 * labeled alternative in {@link LoxParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpression(LoxParser.ExpressionContext ctx);
+	T visitGroup(LoxParser.GroupContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Call}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCall(LoxParser.CallContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Ident}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdent(LoxParser.IdentContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Liter}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLiter(LoxParser.LiterContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Assign}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssign(LoxParser.AssignContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Binary}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinary(LoxParser.BinaryContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Member}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMember(LoxParser.MemberContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Unary}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnary(LoxParser.UnaryContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LoxParser#expressionList}.
 	 * @param ctx the parse tree

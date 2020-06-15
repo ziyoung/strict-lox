@@ -88,35 +88,25 @@ public interface LoxListener extends ParseTreeListener {
 	 */
 	void exitMethodDeclaration(LoxParser.MethodDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LoxParser#blockStatement}.
+	 * Enter a parse tree produced by {@link LoxParser#functionPart}.
 	 * @param ctx the parse tree
 	 */
-	void enterBlockStatement(LoxParser.BlockStatementContext ctx);
+	void enterFunctionPart(LoxParser.FunctionPartContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LoxParser#blockStatement}.
+	 * Exit a parse tree produced by {@link LoxParser#functionPart}.
 	 * @param ctx the parse tree
 	 */
-	void exitBlockStatement(LoxParser.BlockStatementContext ctx);
+	void exitFunctionPart(LoxParser.FunctionPartContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LoxParser#statement}.
+	 * Enter a parse tree produced by {@link LoxParser#modifier}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatement(LoxParser.StatementContext ctx);
+	void enterModifier(LoxParser.ModifierContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LoxParser#statement}.
+	 * Exit a parse tree produced by {@link LoxParser#modifier}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatement(LoxParser.StatementContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LoxParser#expressionStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterExpressionStatement(LoxParser.ExpressionStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LoxParser#expressionStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitExpressionStatement(LoxParser.ExpressionStatementContext ctx);
+	void exitModifier(LoxParser.ModifierContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LoxParser#typeParameters}.
 	 * @param ctx the parse tree
@@ -148,6 +138,106 @@ public interface LoxListener extends ParseTreeListener {
 	 */
 	void exitType(LoxParser.TypeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link LoxParser#blockStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterBlockStatement(LoxParser.BlockStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LoxParser#blockStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitBlockStatement(LoxParser.BlockStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LoxParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterStatement(LoxParser.StatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LoxParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitStatement(LoxParser.StatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LoxParser#expressionStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionStatement(LoxParser.ExpressionStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LoxParser#expressionStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionStatement(LoxParser.ExpressionStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LoxParser#ifStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfStatement(LoxParser.IfStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LoxParser#ifStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfStatement(LoxParser.IfStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LoxParser#elseBranch}.
+	 * @param ctx the parse tree
+	 */
+	void enterElseBranch(LoxParser.ElseBranchContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LoxParser#elseBranch}.
+	 * @param ctx the parse tree
+	 */
+	void exitElseBranch(LoxParser.ElseBranchContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LoxParser#forStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterForStatement(LoxParser.ForStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LoxParser#forStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitForStatement(LoxParser.ForStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LoxParser#initPart}.
+	 * @param ctx the parse tree
+	 */
+	void enterInitPart(LoxParser.InitPartContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LoxParser#initPart}.
+	 * @param ctx the parse tree
+	 */
+	void exitInitPart(LoxParser.InitPartContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LoxParser#conditionPart}.
+	 * @param ctx the parse tree
+	 */
+	void enterConditionPart(LoxParser.ConditionPartContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LoxParser#conditionPart}.
+	 * @param ctx the parse tree
+	 */
+	void exitConditionPart(LoxParser.ConditionPartContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LoxParser#updatePart}.
+	 * @param ctx the parse tree
+	 */
+	void enterUpdatePart(LoxParser.UpdatePartContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LoxParser#updatePart}.
+	 * @param ctx the parse tree
+	 */
+	void exitUpdatePart(LoxParser.UpdatePartContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LoxParser#returnStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterReturnStatement(LoxParser.ReturnStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LoxParser#returnStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitReturnStatement(LoxParser.ReturnStatementContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link LoxParser#variableDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -158,15 +248,101 @@ public interface LoxListener extends ParseTreeListener {
 	 */
 	void exitVariableDeclaration(LoxParser.VariableDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LoxParser#expression}.
+	 * Enter a parse tree produced by the {@code Group}
+	 * labeled alternative in {@link LoxParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpression(LoxParser.ExpressionContext ctx);
+	void enterGroup(LoxParser.GroupContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LoxParser#expression}.
+	 * Exit a parse tree produced by the {@code Group}
+	 * labeled alternative in {@link LoxParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpression(LoxParser.ExpressionContext ctx);
+	void exitGroup(LoxParser.GroupContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Call}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterCall(LoxParser.CallContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Call}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitCall(LoxParser.CallContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Ident}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterIdent(LoxParser.IdentContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Ident}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitIdent(LoxParser.IdentContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Liter}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterLiter(LoxParser.LiterContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Liter}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitLiter(LoxParser.LiterContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Assign}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssign(LoxParser.AssignContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Assign}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssign(LoxParser.AssignContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Binary}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterBinary(LoxParser.BinaryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Binary}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitBinary(LoxParser.BinaryContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Member}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterMember(LoxParser.MemberContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Member}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitMember(LoxParser.MemberContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Unary}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnary(LoxParser.UnaryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Unary}
+	 * labeled alternative in {@link LoxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnary(LoxParser.UnaryContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LoxParser#expressionList}.
 	 * @param ctx the parse tree

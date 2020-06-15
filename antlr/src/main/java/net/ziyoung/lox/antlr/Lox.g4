@@ -24,30 +24,23 @@ memberDeclaration
     ;
 
 proptertyDeclaration
-    : ID ':' type ('=' expression)? ';'
-//    | ID '=' expression ';'
+    :  ID ':' type ('=' expression)? ';'
     ;
 
 functionDeclaration
-    : 'fun' methodDeclaration
+    : 'fun' functionPart
     ;
 
 methodDeclaration
-    : ID '(' typeParameters? ')' (':' type)* blockStatement
+    : modifier? functionPart
     ;
 
-blockStatement
-    : '{' statement* '}'
+functionPart
+    : ID '(' typeParameters? ')' (':' type)? blockStatement
     ;
 
-statement
-    : expressionStatement
-    | variableDeclaration
-    | blockStatement
-    ;
-
-expressionStatement
-    : expression ';'
+modifier
+    : 'static'
     ;
 
 typeParameters
@@ -58,30 +51,75 @@ typeParameter
     : ID ':' type
     ;
 
-//type
-//    : ID ('.' ID)*
-//    ;
 type
     : ID ('.' ID)*
     ;
 
+blockStatement
+    : '{' statement* '}'
+    ;
+
+statement
+    : expressionStatement
+    | variableDeclaration
+    | ifStatement
+    | forStatement
+    | blockStatement
+    | returnStatement
+    ;
+
+expressionStatement
+    : expression ';'
+    ;
+
+ifStatement
+    : 'if' '(' expression ')' blockStatement elseBranch?
+    ;
+
+elseBranch
+    : 'else' (ifStatement | blockStatement)
+    ;
+
+forStatement
+    : 'for' '(' initPart conditionPart updatePart ')' blockStatement
+    ;
+
+initPart
+    : variableDeclaration
+    | expressionStatement
+    | ';'
+    ;
+
+conditionPart
+    : expression? ';'
+    ;
+
+updatePart
+    : expression? ';'
+    ;
+
+returnStatement
+    : 'return' expression? ';'
+    ;
+
 variableDeclaration
     : 'var' ID ':' type ('=' expression)? ';'
-//    | 'var' ID '=' expression ';'
     ;
 
 
 expression
-    : expression '(' expressionList* ')'
-    | expression '.' ID
-    | <asscos=right> ('-' | '!') expression
-    | expression op=('*' | '/' | '%') expression
-    | expression op=('+' | '-') expression
-    | expression op=('>' | '<' | '>=' | '<=') expression
-    | expression op=('==' | '!=') expression
-    | expression op='=' expression
-    | literal
-    | ID
+    : expression '(' expressionList* ')'                    # Call
+    | expression '.' ID                                     # Member
+    | '(' expression ')'                                    # Group
+    | <asscos=right> ('-' | '!') expression                 # Unary
+    | expression op=('*' | '/' | '%') expression            # Binary
+    | expression op=('+' | '-') expression                  # Binary
+    | expression op=('>' | '<' | '>=' | '<=') expression    # Binary
+    | expression op=('==' | '!=') expression                # Binary
+    | expression op=('||' | '&&') expression                # Binary
+    | expression '=' expression                             # Assign
+    | literal                                               # Liter
+    | ID                                                    # Ident
     ;
 
 expressionList
@@ -105,6 +143,7 @@ STRING : 'string';
 PACKAGE: 'package';
 IMPORT: 'import';
 CLASS: 'class';
+STATIC: 'static';
 INTERFACE: 'interface';
 FUN: 'fun';
 OBJECT: 'object';
