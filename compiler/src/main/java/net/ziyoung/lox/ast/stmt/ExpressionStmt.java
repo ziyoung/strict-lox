@@ -1,4 +1,11 @@
 package net.ziyoung.lox.ast.stmt;
 
-public class ExpressionStmt {
+import net.ziyoung.lox.ast.AstVisitor;
+import net.ziyoung.lox.ast.Stmt;
+
+public class ExpressionStmt extends Stmt {
+    @Override
+    public <R> R accept(AstVisitor<R> visitor) {
+        return visitor.visitExpressionStmt(this);
+    }
 }

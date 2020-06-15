@@ -23,6 +23,6 @@ public class CompilationUnit implements Node {
 
     @Override
     public <R> R accept(AstVisitor<R> visitor) {
-        return null;
+        return visitor.visitCompilationUnit(this);
     }
 }

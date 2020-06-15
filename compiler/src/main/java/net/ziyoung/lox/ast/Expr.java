@@ -1,4 +1,5 @@
 package net.ziyoung.lox.ast;
 
-public interface Expr {
+public abstract class Expr implements Node {
+    
 }
