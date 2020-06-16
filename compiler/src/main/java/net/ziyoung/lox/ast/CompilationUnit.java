@@ -6,19 +6,19 @@ import java.util.List;
 
 public class CompilationUnit implements Node {
     private final String packageName;
-    private final List<Decl> decls;
+    private final List<Decl> declList;
 
-    public CompilationUnit(String packageName, List<Decl> decls) {
+    public CompilationUnit(String packageName, List<Decl> declList) {
         this.packageName = packageName;
-        this.decls = decls;
+        this.declList = declList;
     }
 
     public String getPackageName() {
         return packageName;
     }
 
-    public List<Decl> getDecls() {
-        return decls;
+    public List<Decl> getDeclList() {
+        return declList;
     }
 
     @Override

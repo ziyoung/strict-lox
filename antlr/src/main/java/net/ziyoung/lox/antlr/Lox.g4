@@ -19,11 +19,11 @@ classDeclaration
     ;
 
 memberDeclaration
-    : proptertyDeclaration
+    : propertyDeclaration
     | methodDeclaration
     ;
 
-proptertyDeclaration
+propertyDeclaration
     :  ID ':' type ('=' expression)? ';'
     ;
 
@@ -52,7 +52,7 @@ typeParameter
     ;
 
 type
-    : ID ('.' ID)*
+    : ID
     ;
 
 blockStatement

@@ -41,11 +41,11 @@ public interface LoxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMemberDeclaration(LoxParser.MemberDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LoxParser#proptertyDeclaration}.
+	 * Visit a parse tree produced by {@link LoxParser#propertyDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitProptertyDeclaration(LoxParser.ProptertyDeclarationContext ctx);
+	T visitPropertyDeclaration(LoxParser.PropertyDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LoxParser#functionDeclaration}.
 	 * @param ctx the parse tree
