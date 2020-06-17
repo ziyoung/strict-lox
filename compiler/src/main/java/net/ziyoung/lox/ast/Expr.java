@@ -1,5 +1,4 @@
 package net.ziyoung.lox.ast;
 
-public abstract class Expr implements Node {
-    
+public abstract class Expr extends Node {
 }

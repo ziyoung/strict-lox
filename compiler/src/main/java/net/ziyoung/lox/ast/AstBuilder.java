@@ -14,7 +14,6 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     @Override
     public CompilationUnit visitCompilationUnit(LoxParser.CompilationUnitContext ctx) {
         String packageName = ctx.packageDeclaration().ID().getText();
-//        LoxParser.PackageDeclarationContext context = ctx.packageDeclaration();
         List<Decl> declList = ctx.topLevelObject()
                 .stream().map(this::visitTopLevelObject)
                 .collect(Collectors.toList());
@@ -23,6 +22,7 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
 
     @Override
     public Decl visitTopLevelObject(LoxParser.TopLevelObjectContext ctx) {
+//        return (Decl) visitChildren(ctx);
         if (ctx.classDeclaration() != null) {
             return visitClassDeclaration(ctx.classDeclaration());
         }

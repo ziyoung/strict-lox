@@ -4,7 +4,7 @@ import net.ziyoung.lox.ast.stmt.Decl;
 
 import java.util.List;
 
-public class CompilationUnit implements Node {
+public class CompilationUnit extends Node {
     private final String packageName;
     private final List<Decl> declList;
 
