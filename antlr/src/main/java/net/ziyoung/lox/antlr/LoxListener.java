@@ -58,15 +58,15 @@ public interface LoxListener extends ParseTreeListener {
 	 */
 	void exitMemberDeclaration(LoxParser.MemberDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LoxParser#proptertyDeclaration}.
+	 * Enter a parse tree produced by {@link LoxParser#propertyDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterProptertyDeclaration(LoxParser.ProptertyDeclarationContext ctx);
+	void enterPropertyDeclaration(LoxParser.PropertyDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LoxParser#proptertyDeclaration}.
+	 * Exit a parse tree produced by {@link LoxParser#propertyDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitProptertyDeclaration(LoxParser.ProptertyDeclarationContext ctx);
+	void exitPropertyDeclaration(LoxParser.PropertyDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LoxParser#functionDeclaration}.
 	 * @param ctx the parse tree
@@ -272,17 +272,17 @@ public interface LoxListener extends ParseTreeListener {
 	 */
 	void exitCall(LoxParser.CallContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code Ident}
+	 * Enter a parse tree produced by the {@code Variable}
 	 * labeled alternative in {@link LoxParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterIdent(LoxParser.IdentContext ctx);
+	void enterVariable(LoxParser.VariableContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code Ident}
+	 * Exit a parse tree produced by the {@code Variable}
 	 * labeled alternative in {@link LoxParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitIdent(LoxParser.IdentContext ctx);
+	void exitVariable(LoxParser.VariableContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code Liter}
 	 * labeled alternative in {@link LoxParser#expression}.

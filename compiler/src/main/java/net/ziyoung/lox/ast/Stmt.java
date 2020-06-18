@@ -1,4 +1,10 @@
 package net.ziyoung.lox.ast;
 
-public abstract class Stmt implements Node {
+import java.util.Map;
+
+public abstract class Stmt extends Node {
+    @Override
+    public Map<String, String> getProperties() {
+        return updateNodeKind("Statement");
+    }
 }

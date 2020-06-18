@@ -76,13 +76,13 @@ public class LoxBaseListener implements LoxListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterProptertyDeclaration(LoxParser.ProptertyDeclarationContext ctx) { }
+	@Override public void enterPropertyDeclaration(LoxParser.PropertyDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitProptertyDeclaration(LoxParser.ProptertyDeclarationContext ctx) { }
+	@Override public void exitPropertyDeclaration(LoxParser.PropertyDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -328,13 +328,13 @@ public class LoxBaseListener implements LoxListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIdent(LoxParser.IdentContext ctx) { }
+	@Override public void enterVariable(LoxParser.VariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIdent(LoxParser.IdentContext ctx) { }
+	@Override public void exitVariable(LoxParser.VariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

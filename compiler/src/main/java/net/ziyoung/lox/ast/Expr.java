@@ -1,5 +1,10 @@
 package net.ziyoung.lox.ast;
 
-public abstract class Expr implements Node {
-    
+import java.util.Map;
+
+public abstract class Expr extends Node {
+    @Override
+    public Map<String, String> getProperties() {
+        return updateNodeKind("Expression");
+    }
 }
