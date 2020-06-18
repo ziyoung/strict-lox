@@ -30,7 +30,7 @@ public abstract class AstBaseVisitor<R> implements AstVisitor<R> {
     }
 
     @Override
-    public R visitLiteralExpr(LiteralExpr node) {
+    public R visitLiteral(Literal node) {
         return null;
     }
 

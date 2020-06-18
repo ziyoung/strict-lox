@@ -3,9 +3,11 @@ package net.ziyoung.lox.fe;
 import net.ziyoung.lox.antlr.LoxBaseVisitor;
 import net.ziyoung.lox.antlr.LoxParser;
 import net.ziyoung.lox.ast.*;
+import net.ziyoung.lox.ast.expr.Literal;
 import net.ziyoung.lox.ast.expr.Parameter;
 import net.ziyoung.lox.ast.expr.VariableExpr;
 import net.ziyoung.lox.ast.stmt.*;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,15 +97,11 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
         if (ctx.statement().size() != 0) {
             stmtList = new ArrayList<>();
             for (LoxParser.StatementContext statementContext : ctx.statement()) {
-                stmtList.add(visitStatement(statementContext));
+                Stmt stmt = (Stmt) visitStatement(statementContext);
+                stmtList.add(stmt);
             }
         }
         return new BlockStmt(stmtList);
-    }
-
-    @Override
-    public Stmt visitStatement(LoxParser.StatementContext ctx) {
-        return null;
     }
 
     @Override
@@ -178,7 +176,29 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
 
     @Override
     public Node visitLiter(LoxParser.LiterContext ctx) {
-        return super.visitLiter(ctx);
+        LoxParser.LiteralContext literalContext = ctx.literal();
+        LiteralType kind;
+        TerminalNode terminalNode;
+        if (literalContext.BOOL_LITERAL() != null) {
+            terminalNode = literalContext.BOOL_LITERAL();
+            kind = LiteralType.BOOL;
+        } else if (literalContext.INT_LITERAL() != null) {
+            terminalNode = literalContext.INT_LITERAL();
+            kind = LiteralType.INT;
+        } else if (literalContext.DOUBLE_LITERAL() != null) {
+            terminalNode = literalContext.DOUBLE_LITERAL();
+            kind = LiteralType.DOUBLE;
+        } else if (literalContext.STRING_LITERAL() != null) {
+            terminalNode = literalContext.STRING_LITERAL();
+            kind = LiteralType.STRING;
+        } else if (literalContext.NULL_LITERAL() != null) {
+            terminalNode = literalContext.NULL_LITERAL();
+            kind = LiteralType.NULL;
+        } else {
+            throw new RuntimeException("unreachable condition");
+        }
+
+        return Literal.from(terminalNode, kind);
     }
 
     @Override
@@ -204,10 +224,5 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     @Override
     public Node visitExpressionList(LoxParser.ExpressionListContext ctx) {
         return super.visitExpressionList(ctx);
-    }
-
-    @Override
-    public Node visitLiteral(LoxParser.LiteralContext ctx) {
-        return super.visitLiteral(ctx);
     }
 }

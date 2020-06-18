@@ -16,7 +16,7 @@ public interface AstVisitor<R> {
 
     R visitGroupExpr(GroupExpr node);
 
-    R visitLiteralExpr(LiteralExpr node);
+    R visitLiteral(Literal node);
 
     R visitMemberExpr(MemberExpr node);
 
