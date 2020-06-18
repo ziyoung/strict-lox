@@ -3,6 +3,7 @@ package net.ziyoung.lox.ast;
 import net.ziyoung.lox.ast.stmt.Decl;
 
 import java.util.List;
+import java.util.Map;
 
 public class CompilationUnit extends Node {
     private final String packageName;
@@ -24,5 +25,10 @@ public class CompilationUnit extends Node {
     @Override
     public <R> R accept(AstVisitor<R> visitor) {
         return visitor.visitCompilationUnit(this);
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return updateNodeKind("CompilationUnit");
     }
 }

@@ -52,7 +52,12 @@ typeParameter
     ;
 
 type
-    : ID
+    : INT
+    | LONG
+    | FLOAT
+    | DOUBLE
+    | STRING
+    | ID
     ;
 
 blockStatement
@@ -119,7 +124,7 @@ expression
     | expression op=('||' | '&&') expression                # Binary
     | expression '=' expression                             # Assign
     | literal                                               # Liter
-    | ID                                                    # Ident
+    | ID                                                    # Variable
     ;
 
 expressionList

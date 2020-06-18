@@ -6,7 +6,9 @@ import net.ziyoung.lox.ast.stmt.*;
 public interface AstVisitor<R> {
     R visitTypeNode(TypeNode node);
 
-    R visitIdentifierNode(IdentifierNode node);
+    R visitIdentifier(Identifier node);
+
+    R visitParameter(Parameter node);
 
     R visitBinaryExpr(BinaryExpr node);
 

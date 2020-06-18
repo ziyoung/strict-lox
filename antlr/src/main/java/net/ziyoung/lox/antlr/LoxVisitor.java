@@ -169,12 +169,12 @@ public interface LoxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCall(LoxParser.CallContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code Ident}
+	 * Visit a parse tree produced by the {@code Variable}
 	 * labeled alternative in {@link LoxParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIdent(LoxParser.IdentContext ctx);
+	T visitVariable(LoxParser.VariableContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Liter}
 	 * labeled alternative in {@link LoxParser#expression}.

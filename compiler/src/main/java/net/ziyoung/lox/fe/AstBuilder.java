@@ -1,12 +1,14 @@
-package net.ziyoung.lox.ast;
+package net.ziyoung.lox.fe;
 
 import net.ziyoung.lox.antlr.LoxBaseVisitor;
 import net.ziyoung.lox.antlr.LoxParser;
-import net.ziyoung.lox.ast.stmt.ClassDecl;
-import net.ziyoung.lox.ast.stmt.Decl;
-import net.ziyoung.lox.ast.stmt.FunctionDecl;
-import net.ziyoung.lox.ast.stmt.VariableDecl;
+import net.ziyoung.lox.ast.*;
+import net.ziyoung.lox.ast.expr.Parameter;
+import net.ziyoung.lox.ast.expr.VariableExpr;
+import net.ziyoung.lox.ast.stmt.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,7 +54,7 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
 
     @Override
     public FunctionDecl visitFunctionDeclaration(LoxParser.FunctionDeclarationContext ctx) {
-        return null;
+        return visitFunctionPart(ctx.functionPart());
     }
 
     @Override
@@ -61,8 +63,18 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitFunctionPart(LoxParser.FunctionPartContext ctx) {
-        return super.visitFunctionPart(ctx);
+    public FunctionDecl visitFunctionPart(LoxParser.FunctionPartContext ctx) {
+        Identifier identifier = Identifier.from(ctx.ID());
+        List<Parameter> parameterList = Collections.emptyList();
+        TypeNode typeNode = TypeNode.from(ctx.type());
+        if (ctx.typeParameters() != null) {
+            parameterList = new ArrayList<>();
+            for (LoxParser.TypeParameterContext parameterContext : ctx.typeParameters().typeParameter()) {
+                parameterList.add(visitTypeParameter(parameterContext));
+            }
+        }
+        BlockStmt blockStmt = visitBlockStatement(ctx.blockStatement());
+        return new FunctionDecl(identifier, parameterList, typeNode, blockStmt);
     }
 
     @Override
@@ -71,28 +83,27 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitTypeParameters(LoxParser.TypeParametersContext ctx) {
-        return super.visitTypeParameters(ctx);
+    public Parameter visitTypeParameter(LoxParser.TypeParameterContext ctx) {
+        Identifier identifier = Identifier.from(ctx.ID());
+        TypeNode typeNode = TypeNode.from(ctx.type());
+        return new Parameter(identifier, typeNode);
     }
 
     @Override
-    public Node visitTypeParameter(LoxParser.TypeParameterContext ctx) {
-        return super.visitTypeParameter(ctx);
+    public BlockStmt visitBlockStatement(LoxParser.BlockStatementContext ctx) {
+        List<Stmt> stmtList = Collections.emptyList();
+        if (ctx.statement().size() != 0) {
+            stmtList = new ArrayList<>();
+            for (LoxParser.StatementContext statementContext : ctx.statement()) {
+                stmtList.add(visitStatement(statementContext));
+            }
+        }
+        return new BlockStmt(stmtList);
     }
 
     @Override
-    public Node visitType(LoxParser.TypeContext ctx) {
-        return super.visitType(ctx);
-    }
-
-    @Override
-    public Node visitBlockStatement(LoxParser.BlockStatementContext ctx) {
-        return super.visitBlockStatement(ctx);
-    }
-
-    @Override
-    public Node visitStatement(LoxParser.StatementContext ctx) {
-        return super.visitStatement(ctx);
+    public Stmt visitStatement(LoxParser.StatementContext ctx) {
+        return null;
     }
 
     @Override
@@ -137,7 +148,16 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
 
     @Override
     public VariableDecl visitVariableDeclaration(LoxParser.VariableDeclarationContext ctx) {
-        return null;
+        Identifier identifier = Identifier.from(ctx.ID());
+        TypeNode typeNode = TypeNode.from(ctx.type());
+        Expr init = null;
+        LoxParser.ExpressionContext expressionContext = ctx.expression();
+        if (expressionContext != null) {
+            init = (Expr) visit(expressionContext);
+        }
+        VariableDecl variableDecl = new VariableDecl(identifier, typeNode, init);
+        variableDecl.setPosition(ctx);
+        return variableDecl;
     }
 
     @Override
@@ -151,8 +171,9 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitIdent(LoxParser.IdentContext ctx) {
-        return super.visitIdent(ctx);
+    public Node visitVariable(LoxParser.VariableContext ctx) {
+        Identifier identifier = Identifier.from(ctx.ID());
+        return new VariableExpr(identifier);
     }
 
     @Override
