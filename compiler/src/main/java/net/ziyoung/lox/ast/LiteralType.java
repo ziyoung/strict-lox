@@ -3,9 +3,7 @@ package net.ziyoung.lox.ast;
 public enum LiteralType {
     BOOL("bool"),
     INT("int"),
-    //    LONG("long"),
-//    FLOAT("float"),
-        DOUBLE("double"),
+    DOUBLE("double"),
     STRING("string"),
     NULL("null");
     private final String name;

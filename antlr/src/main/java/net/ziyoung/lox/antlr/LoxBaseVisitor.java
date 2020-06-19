@@ -220,13 +220,6 @@ public class LoxBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Lo
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAssign(LoxParser.AssignContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitBinary(LoxParser.BinaryContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

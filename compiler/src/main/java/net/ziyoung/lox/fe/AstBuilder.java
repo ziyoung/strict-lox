@@ -3,9 +3,7 @@ package net.ziyoung.lox.fe;
 import net.ziyoung.lox.antlr.LoxBaseVisitor;
 import net.ziyoung.lox.antlr.LoxParser;
 import net.ziyoung.lox.ast.*;
-import net.ziyoung.lox.ast.expr.Literal;
-import net.ziyoung.lox.ast.expr.Parameter;
-import net.ziyoung.lox.ast.expr.VariableExpr;
+import net.ziyoung.lox.ast.expr.*;
 import net.ziyoung.lox.ast.stmt.*;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -201,13 +199,14 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitAssign(LoxParser.AssignContext ctx) {
-        return super.visitAssign(ctx);
-    }
-
-    @Override
-    public Node visitBinary(LoxParser.BinaryContext ctx) {
-        return super.visitBinary(ctx);
+    public BinaryExpr visitBinary(LoxParser.BinaryContext ctx) {
+        Expr lhs = (Expr) visit(ctx.expression(0));
+        Expr rhs = (Expr) visit(ctx.expression(1));
+        Identifier op = Identifier.from(ctx.op);
+        if (ctx.op.getType() == LoxParser.Assign) {
+            return new AssignExpr(lhs, op, rhs);
+        }
+        return new BinaryExpr(lhs, op, rhs);
     }
 
     @Override

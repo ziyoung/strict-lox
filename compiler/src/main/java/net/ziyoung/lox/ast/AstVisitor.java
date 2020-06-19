@@ -12,6 +12,8 @@ public interface AstVisitor<R> {
 
     R visitBinaryExpr(BinaryExpr node);
 
+    R visitAssignExpr(AssignExpr node);
+
     R visitCallExpr(CallExpr node);
 
     R visitGroupExpr(GroupExpr node);

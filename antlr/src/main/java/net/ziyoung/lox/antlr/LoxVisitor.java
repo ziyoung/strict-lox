@@ -189,13 +189,6 @@ public interface LoxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLiter(LoxParser.LiterContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code Assign}
-	 * labeled alternative in {@link LoxParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssign(LoxParser.AssignContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code Binary}
 	 * labeled alternative in {@link LoxParser#expression}.
 	 * @param ctx the parse tree

@@ -18,14 +18,14 @@ public class LoxParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
-		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, T__22=23, INT=24, FLOAT=25, 
-		DOUBLE=26, LONG=27, STRING=28, PACKAGE=29, IMPORT=30, CLASS=31, STATIC=32, 
-		INTERFACE=33, FUN=34, OBJECT=35, VAL=36, VAR=37, CONSTRUCTOR=38, THIS=39, 
-		SUPER=40, IF=41, ELSE=42, MATCH=43, TRY=44, CATCH=45, FINALLY=46, THROW=47, 
-		FOR=48, WHILE=49, RETURN=50, CONTINUE=51, BREAK=52, INT_LITERAL=53, DOUBLE_LITERAL=54, 
-		BOOL_LITERAL=55, NULL_LITERAL=56, STRING_LITERAL=57, CLASS_ID=58, ID=59, 
-		WS=60, SINGLE_LINE_COMMENT=61, MULTI_LINE_COMMENT=62;
+		T__9=10, T__10=11, INT=12, FLOAT=13, DOUBLE=14, LONG=15, STRING=16, PACKAGE=17, 
+		IMPORT=18, CLASS=19, STATIC=20, INTERFACE=21, FUN=22, OBJECT=23, VAL=24, 
+		VAR=25, CONSTRUCTOR=26, THIS=27, SUPER=28, IF=29, ELSE=30, MATCH=31, TRY=32, 
+		CATCH=33, FINALLY=34, THROW=35, FOR=36, WHILE=37, RETURN=38, CONTINUE=39, 
+		BREAK=40, Less=41, LessEqual=42, Greater=43, GreaterEqual=44, Equal=45, 
+		NotEqual=46, Plus=47, Minus=48, Star=49, Div=50, Mod=51, Assign=52, INT_LITERAL=53, 
+		DOUBLE_LITERAL=54, BOOL_LITERAL=55, NULL_LITERAL=56, STRING_LITERAL=57, 
+		CLASS_ID=58, ID=59, WS=60, SINGLE_LINE_COMMENT=61, MULTI_LINE_COMMENT=62;
 	public static final int
 		RULE_compilationUnit = 0, RULE_packageDeclaration = 1, RULE_packageName = 2, 
 		RULE_topLevelObject = 3, RULE_classDeclaration = 4, RULE_memberDeclaration = 5, 
@@ -51,27 +51,27 @@ public class LoxParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "';'", "'{'", "'}'", "':'", "'='", "'('", "')'", "','", "'.'", 
-			"'-'", "'!'", "'*'", "'/'", "'%'", "'+'", "'>'", "'<'", "'>='", "'<='", 
-			"'=='", "'!='", "'||'", "'&&'", "'int'", "'float'", "'double'", "'long'", 
-			"'string'", "'package'", "'import'", "'class'", "'static'", "'interface'", 
-			"'fun'", "'object'", "'val'", "'var'", "'constructor'", "'this'", "'super'", 
-			"'if'", "'else'", "'match'", "'try'", "'catch'", "'finally'", "'throw'", 
-			"'for'", "'while'", "'return'", "'continue'", "'break'", null, null, 
-			null, "'null'"
+			null, "';'", "'{'", "'}'", "':'", "'('", "')'", "','", "'.'", "'!'", 
+			"'||'", "'&&'", "'int'", "'float'", "'double'", "'long'", "'string'", 
+			"'package'", "'import'", "'class'", "'static'", "'interface'", "'fun'", 
+			"'object'", "'val'", "'var'", "'constructor'", "'this'", "'super'", "'if'", 
+			"'else'", "'match'", "'try'", "'catch'", "'finally'", "'throw'", "'for'", 
+			"'while'", "'return'", "'continue'", "'break'", "'<'", "'<='", "'>'", 
+			"'>='", "'=='", "'!='", "'+'", "'-'", "'*'", "'/'", "'%'", "'='", null, 
+			null, null, "'null'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, null, null, null, 
 			"INT", "FLOAT", "DOUBLE", "LONG", "STRING", "PACKAGE", "IMPORT", "CLASS", 
 			"STATIC", "INTERFACE", "FUN", "OBJECT", "VAL", "VAR", "CONSTRUCTOR", 
 			"THIS", "SUPER", "IF", "ELSE", "MATCH", "TRY", "CATCH", "FINALLY", "THROW", 
-			"FOR", "WHILE", "RETURN", "CONTINUE", "BREAK", "INT_LITERAL", "DOUBLE_LITERAL", 
-			"BOOL_LITERAL", "NULL_LITERAL", "STRING_LITERAL", "CLASS_ID", "ID", "WS", 
-			"SINGLE_LINE_COMMENT", "MULTI_LINE_COMMENT"
+			"FOR", "WHILE", "RETURN", "CONTINUE", "BREAK", "Less", "LessEqual", "Greater", 
+			"GreaterEqual", "Equal", "NotEqual", "Plus", "Minus", "Star", "Div", 
+			"Mod", "Assign", "INT_LITERAL", "DOUBLE_LITERAL", "BOOL_LITERAL", "NULL_LITERAL", 
+			"STRING_LITERAL", "CLASS_ID", "ID", "WS", "SINGLE_LINE_COMMENT", "MULTI_LINE_COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -498,6 +498,7 @@ public class LoxParser extends Parser {
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
+		public TerminalNode Assign() { return getToken(LoxParser.Assign, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -536,10 +537,10 @@ public class LoxParser extends Parser {
 			setState(94);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==T__4) {
+			if (_la==Assign) {
 				{
 				setState(92);
-				match(T__4);
+				match(Assign);
 				setState(93);
 				expression(0);
 				}
@@ -705,7 +706,7 @@ public class LoxParser extends Parser {
 			setState(106);
 			match(ID);
 			setState(107);
-			match(T__5);
+			match(T__4);
 			setState(109);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -717,7 +718,7 @@ public class LoxParser extends Parser {
 			}
 
 			setState(111);
-			match(T__6);
+			match(T__5);
 			setState(114);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -825,11 +826,11 @@ public class LoxParser extends Parser {
 			setState(125);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__7) {
+			while (_la==T__6) {
 				{
 				{
 				setState(121);
-				match(T__7);
+				match(T__6);
 				setState(122);
 				typeParameter();
 				}
@@ -994,7 +995,7 @@ public class LoxParser extends Parser {
 			setState(138);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__1) | (1L << T__5) | (1L << T__9) | (1L << T__10) | (1L << VAR) | (1L << IF) | (1L << FOR) | (1L << RETURN) | (1L << INT_LITERAL) | (1L << DOUBLE_LITERAL) | (1L << BOOL_LITERAL) | (1L << NULL_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__1) | (1L << T__4) | (1L << T__8) | (1L << VAR) | (1L << IF) | (1L << FOR) | (1L << RETURN) | (1L << Minus) | (1L << INT_LITERAL) | (1L << DOUBLE_LITERAL) | (1L << BOOL_LITERAL) | (1L << NULL_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 				{
 				{
 				setState(135);
@@ -1065,9 +1066,9 @@ public class LoxParser extends Parser {
 			setState(149);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case T__5:
-			case T__9:
-			case T__10:
+			case T__4:
+			case T__8:
+			case Minus:
 			case INT_LITERAL:
 			case DOUBLE_LITERAL:
 			case BOOL_LITERAL:
@@ -1216,11 +1217,11 @@ public class LoxParser extends Parser {
 			setState(154);
 			match(IF);
 			setState(155);
-			match(T__5);
+			match(T__4);
 			setState(156);
 			expression(0);
 			setState(157);
-			match(T__6);
+			match(T__5);
 			setState(158);
 			blockStatement();
 			setState(160);
@@ -1354,7 +1355,7 @@ public class LoxParser extends Parser {
 			setState(167);
 			match(FOR);
 			setState(168);
-			match(T__5);
+			match(T__4);
 			setState(169);
 			initPart();
 			setState(170);
@@ -1362,7 +1363,7 @@ public class LoxParser extends Parser {
 			setState(171);
 			updatePart();
 			setState(172);
-			match(T__6);
+			match(T__5);
 			setState(173);
 			blockStatement();
 			}
@@ -1418,9 +1419,9 @@ public class LoxParser extends Parser {
 				variableDeclaration();
 				}
 				break;
-			case T__5:
-			case T__9:
-			case T__10:
+			case T__4:
+			case T__8:
+			case Minus:
 			case INT_LITERAL:
 			case DOUBLE_LITERAL:
 			case BOOL_LITERAL:
@@ -1488,7 +1489,7 @@ public class LoxParser extends Parser {
 			setState(181);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__5) | (1L << T__9) | (1L << T__10) | (1L << INT_LITERAL) | (1L << DOUBLE_LITERAL) | (1L << BOOL_LITERAL) | (1L << NULL_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__8) | (1L << Minus) | (1L << INT_LITERAL) | (1L << DOUBLE_LITERAL) | (1L << BOOL_LITERAL) | (1L << NULL_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 				{
 				setState(180);
 				expression(0);
@@ -1543,7 +1544,7 @@ public class LoxParser extends Parser {
 			setState(186);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__5) | (1L << T__9) | (1L << T__10) | (1L << INT_LITERAL) | (1L << DOUBLE_LITERAL) | (1L << BOOL_LITERAL) | (1L << NULL_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__8) | (1L << Minus) | (1L << INT_LITERAL) | (1L << DOUBLE_LITERAL) | (1L << BOOL_LITERAL) | (1L << NULL_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 				{
 				setState(185);
 				expression(0);
@@ -1601,7 +1602,7 @@ public class LoxParser extends Parser {
 			setState(192);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__5) | (1L << T__9) | (1L << T__10) | (1L << INT_LITERAL) | (1L << DOUBLE_LITERAL) | (1L << BOOL_LITERAL) | (1L << NULL_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__8) | (1L << Minus) | (1L << INT_LITERAL) | (1L << DOUBLE_LITERAL) | (1L << BOOL_LITERAL) | (1L << NULL_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 				{
 				setState(191);
 				expression(0);
@@ -1629,6 +1630,7 @@ public class LoxParser extends Parser {
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
+		public TerminalNode Assign() { return getToken(LoxParser.Assign, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -1669,10 +1671,10 @@ public class LoxParser extends Parser {
 			setState(202);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==T__4) {
+			if (_la==Assign) {
 				{
 				setState(200);
-				match(T__4);
+				match(Assign);
 				setState(201);
 				expression(0);
 				}
@@ -1784,28 +1786,6 @@ public class LoxParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class AssignContext extends ExpressionContext {
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public AssignContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LoxListener ) ((LoxListener)listener).enterAssign(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LoxListener ) ((LoxListener)listener).exitAssign(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LoxVisitor ) return ((LoxVisitor<? extends T>)visitor).visitAssign(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class BinaryContext extends ExpressionContext {
 		public Token op;
 		public List<ExpressionContext> expression() {
@@ -1814,6 +1794,18 @@ public class LoxParser extends Parser {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode Star() { return getToken(LoxParser.Star, 0); }
+		public TerminalNode Div() { return getToken(LoxParser.Div, 0); }
+		public TerminalNode Mod() { return getToken(LoxParser.Mod, 0); }
+		public TerminalNode Plus() { return getToken(LoxParser.Plus, 0); }
+		public TerminalNode Minus() { return getToken(LoxParser.Minus, 0); }
+		public TerminalNode Greater() { return getToken(LoxParser.Greater, 0); }
+		public TerminalNode Less() { return getToken(LoxParser.Less, 0); }
+		public TerminalNode GreaterEqual() { return getToken(LoxParser.GreaterEqual, 0); }
+		public TerminalNode LessEqual() { return getToken(LoxParser.LessEqual, 0); }
+		public TerminalNode Equal() { return getToken(LoxParser.Equal, 0); }
+		public TerminalNode NotEqual() { return getToken(LoxParser.NotEqual, 0); }
+		public TerminalNode Assign() { return getToken(LoxParser.Assign, 0); }
 		public BinaryContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1853,6 +1845,7 @@ public class LoxParser extends Parser {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode Minus() { return getToken(LoxParser.Minus, 0); }
 		public UnaryContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1888,29 +1881,29 @@ public class LoxParser extends Parser {
 			setState(215);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case T__5:
+			case T__4:
 				{
 				_localctx = new GroupContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
 				setState(207);
-				match(T__5);
+				match(T__4);
 				setState(208);
 				expression(0);
 				setState(209);
-				match(T__6);
+				match(T__5);
 				}
 				break;
-			case T__9:
-			case T__10:
+			case T__8:
+			case Minus:
 				{
 				_localctx = new UnaryContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(211);
 				_la = _input.LA(1);
-				if ( !(_la==T__9 || _la==T__10) ) {
+				if ( !(_la==T__8 || _la==Minus) ) {
 				_errHandler.recoverInline(this);
 				}
 				else {
@@ -1968,7 +1961,7 @@ public class LoxParser extends Parser {
 						setState(218);
 						((BinaryContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__11) | (1L << T__12) | (1L << T__13))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Star) | (1L << Div) | (1L << Mod))) != 0)) ) {
 							((BinaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -1989,7 +1982,7 @@ public class LoxParser extends Parser {
 						setState(221);
 						((BinaryContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(_la==T__9 || _la==T__14) ) {
+						if ( !(_la==Plus || _la==Minus) ) {
 							((BinaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -2010,7 +2003,7 @@ public class LoxParser extends Parser {
 						setState(224);
 						((BinaryContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__15) | (1L << T__16) | (1L << T__17) | (1L << T__18))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Less) | (1L << LessEqual) | (1L << Greater) | (1L << GreaterEqual))) != 0)) ) {
 							((BinaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -2031,7 +2024,7 @@ public class LoxParser extends Parser {
 						setState(227);
 						((BinaryContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(_la==T__19 || _la==T__20) ) {
+						if ( !(_la==Equal || _la==NotEqual) ) {
 							((BinaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -2052,7 +2045,7 @@ public class LoxParser extends Parser {
 						setState(230);
 						((BinaryContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(_la==T__21 || _la==T__22) ) {
+						if ( !(_la==T__9 || _la==T__10) ) {
 							((BinaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -2066,12 +2059,12 @@ public class LoxParser extends Parser {
 						break;
 					case 6:
 						{
-						_localctx = new AssignContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new BinaryContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(232);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
 						setState(233);
-						match(T__4);
+						((BinaryContext)_localctx).op = match(Assign);
 						setState(234);
 						expression(4);
 						}
@@ -2083,11 +2076,11 @@ public class LoxParser extends Parser {
 						setState(235);
 						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
 						setState(236);
-						match(T__5);
+						match(T__4);
 						setState(240);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
-						while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__5) | (1L << T__9) | (1L << T__10) | (1L << INT_LITERAL) | (1L << DOUBLE_LITERAL) | (1L << BOOL_LITERAL) | (1L << NULL_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+						while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__8) | (1L << Minus) | (1L << INT_LITERAL) | (1L << DOUBLE_LITERAL) | (1L << BOOL_LITERAL) | (1L << NULL_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 							{
 							{
 							setState(237);
@@ -2099,7 +2092,7 @@ public class LoxParser extends Parser {
 							_la = _input.LA(1);
 						}
 						setState(243);
-						match(T__6);
+						match(T__5);
 						}
 						break;
 					case 8:
@@ -2109,7 +2102,7 @@ public class LoxParser extends Parser {
 						setState(244);
 						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
 						setState(245);
-						match(T__8);
+						match(T__7);
 						setState(246);
 						match(ID);
 						}
@@ -2172,11 +2165,11 @@ public class LoxParser extends Parser {
 			setState(257);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__7) {
+			while (_la==T__6) {
 				{
 				{
 				setState(253);
-				match(T__7);
+				match(T__6);
 				setState(254);
 				expression(0);
 				}
@@ -2304,27 +2297,27 @@ public class LoxParser extends Parser {
 		"\3\33\7\33\u00f1\n\33\f\33\16\33\u00f4\13\33\3\33\3\33\3\33\3\33\7\33"+
 		"\u00fa\n\33\f\33\16\33\u00fd\13\33\3\34\3\34\3\34\7\34\u0102\n\34\f\34"+
 		"\16\34\u0105\13\34\3\35\3\35\3\35\2\3\64\36\2\4\6\b\n\f\16\20\22\24\26"+
-		"\30\32\34\36 \"$&(*,.\60\62\64\668\2\13\3\2<=\4\2\32\36==\3\2\f\r\3\2"+
-		"\16\20\4\2\f\f\21\21\3\2\22\25\3\2\26\27\3\2\30\31\3\2\67;\2\u0111\2:"+
-		"\3\2\2\2\4A\3\2\2\2\6E\3\2\2\2\bJ\3\2\2\2\nL\3\2\2\2\fY\3\2\2\2\16[\3"+
-		"\2\2\2\20d\3\2\2\2\22h\3\2\2\2\24l\3\2\2\2\26x\3\2\2\2\30z\3\2\2\2\32"+
-		"\u0082\3\2\2\2\34\u0086\3\2\2\2\36\u0088\3\2\2\2 \u0097\3\2\2\2\"\u0099"+
-		"\3\2\2\2$\u009c\3\2\2\2&\u00a4\3\2\2\2(\u00a9\3\2\2\2*\u00b4\3\2\2\2,"+
-		"\u00b7\3\2\2\2.\u00bc\3\2\2\2\60\u00c0\3\2\2\2\62\u00c6\3\2\2\2\64\u00d9"+
-		"\3\2\2\2\66\u00fe\3\2\2\28\u0106\3\2\2\2:>\5\4\3\2;=\5\b\5\2<;\3\2\2\2"+
-		"=@\3\2\2\2><\3\2\2\2>?\3\2\2\2?\3\3\2\2\2@>\3\2\2\2AB\7\37\2\2BC\5\6\4"+
-		"\2CD\7\3\2\2D\5\3\2\2\2EF\t\2\2\2F\7\3\2\2\2GK\5\n\6\2HK\5\20\t\2IK\5"+
-		"\62\32\2JG\3\2\2\2JH\3\2\2\2JI\3\2\2\2K\t\3\2\2\2LM\7!\2\2MN\7=\2\2NR"+
-		"\7\4\2\2OQ\5\f\7\2PO\3\2\2\2QT\3\2\2\2RP\3\2\2\2RS\3\2\2\2SU\3\2\2\2T"+
-		"R\3\2\2\2UV\7\5\2\2V\13\3\2\2\2WZ\5\16\b\2XZ\5\22\n\2YW\3\2\2\2YX\3\2"+
-		"\2\2Z\r\3\2\2\2[\\\7=\2\2\\]\7\6\2\2]`\5\34\17\2^_\7\7\2\2_a\5\64\33\2"+
-		"`^\3\2\2\2`a\3\2\2\2ab\3\2\2\2bc\7\3\2\2c\17\3\2\2\2de\7$\2\2ef\5\24\13"+
+		"\30\32\34\36 \"$&(*,.\60\62\64\668\2\13\3\2<=\4\2\16\22==\4\2\13\13\62"+
+		"\62\3\2\63\65\3\2\61\62\3\2+.\3\2/\60\3\2\f\r\3\2\67;\2\u0111\2:\3\2\2"+
+		"\2\4A\3\2\2\2\6E\3\2\2\2\bJ\3\2\2\2\nL\3\2\2\2\fY\3\2\2\2\16[\3\2\2\2"+
+		"\20d\3\2\2\2\22h\3\2\2\2\24l\3\2\2\2\26x\3\2\2\2\30z\3\2\2\2\32\u0082"+
+		"\3\2\2\2\34\u0086\3\2\2\2\36\u0088\3\2\2\2 \u0097\3\2\2\2\"\u0099\3\2"+
+		"\2\2$\u009c\3\2\2\2&\u00a4\3\2\2\2(\u00a9\3\2\2\2*\u00b4\3\2\2\2,\u00b7"+
+		"\3\2\2\2.\u00bc\3\2\2\2\60\u00c0\3\2\2\2\62\u00c6\3\2\2\2\64\u00d9\3\2"+
+		"\2\2\66\u00fe\3\2\2\28\u0106\3\2\2\2:>\5\4\3\2;=\5\b\5\2<;\3\2\2\2=@\3"+
+		"\2\2\2><\3\2\2\2>?\3\2\2\2?\3\3\2\2\2@>\3\2\2\2AB\7\23\2\2BC\5\6\4\2C"+
+		"D\7\3\2\2D\5\3\2\2\2EF\t\2\2\2F\7\3\2\2\2GK\5\n\6\2HK\5\20\t\2IK\5\62"+
+		"\32\2JG\3\2\2\2JH\3\2\2\2JI\3\2\2\2K\t\3\2\2\2LM\7\25\2\2MN\7=\2\2NR\7"+
+		"\4\2\2OQ\5\f\7\2PO\3\2\2\2QT\3\2\2\2RP\3\2\2\2RS\3\2\2\2SU\3\2\2\2TR\3"+
+		"\2\2\2UV\7\5\2\2V\13\3\2\2\2WZ\5\16\b\2XZ\5\22\n\2YW\3\2\2\2YX\3\2\2\2"+
+		"Z\r\3\2\2\2[\\\7=\2\2\\]\7\6\2\2]`\5\34\17\2^_\7\66\2\2_a\5\64\33\2`^"+
+		"\3\2\2\2`a\3\2\2\2ab\3\2\2\2bc\7\3\2\2c\17\3\2\2\2de\7\30\2\2ef\5\24\13"+
 		"\2f\21\3\2\2\2gi\5\26\f\2hg\3\2\2\2hi\3\2\2\2ij\3\2\2\2jk\5\24\13\2k\23"+
-		"\3\2\2\2lm\7=\2\2mo\7\b\2\2np\5\30\r\2on\3\2\2\2op\3\2\2\2pq\3\2\2\2q"+
-		"t\7\t\2\2rs\7\6\2\2su\5\34\17\2tr\3\2\2\2tu\3\2\2\2uv\3\2\2\2vw\5\36\20"+
-		"\2w\25\3\2\2\2xy\7\"\2\2y\27\3\2\2\2z\177\5\32\16\2{|\7\n\2\2|~\5\32\16"+
-		"\2}{\3\2\2\2~\u0081\3\2\2\2\177}\3\2\2\2\177\u0080\3\2\2\2\u0080\31\3"+
-		"\2\2\2\u0081\177\3\2\2\2\u0082\u0083\7=\2\2\u0083\u0084\7\6\2\2\u0084"+
+		"\3\2\2\2lm\7=\2\2mo\7\7\2\2np\5\30\r\2on\3\2\2\2op\3\2\2\2pq\3\2\2\2q"+
+		"t\7\b\2\2rs\7\6\2\2su\5\34\17\2tr\3\2\2\2tu\3\2\2\2uv\3\2\2\2vw\5\36\20"+
+		"\2w\25\3\2\2\2xy\7\26\2\2y\27\3\2\2\2z\177\5\32\16\2{|\7\t\2\2|~\5\32"+
+		"\16\2}{\3\2\2\2~\u0081\3\2\2\2\177}\3\2\2\2\177\u0080\3\2\2\2\u0080\31"+
+		"\3\2\2\2\u0081\177\3\2\2\2\u0082\u0083\7=\2\2\u0083\u0084\7\6\2\2\u0084"+
 		"\u0085\5\34\17\2\u0085\33\3\2\2\2\u0086\u0087\t\3\2\2\u0087\35\3\2\2\2"+
 		"\u0088\u008c\7\4\2\2\u0089\u008b\5 \21\2\u008a\u0089\3\2\2\2\u008b\u008e"+
 		"\3\2\2\2\u008c\u008a\3\2\2\2\u008c\u008d\3\2\2\2\u008d\u008f\3\2\2\2\u008e"+
@@ -2333,45 +2326,45 @@ public class LoxParser extends Parser {
 		"\u0098\5\36\20\2\u0096\u0098\5\60\31\2\u0097\u0091\3\2\2\2\u0097\u0092"+
 		"\3\2\2\2\u0097\u0093\3\2\2\2\u0097\u0094\3\2\2\2\u0097\u0095\3\2\2\2\u0097"+
 		"\u0096\3\2\2\2\u0098!\3\2\2\2\u0099\u009a\5\64\33\2\u009a\u009b\7\3\2"+
-		"\2\u009b#\3\2\2\2\u009c\u009d\7+\2\2\u009d\u009e\7\b\2\2\u009e\u009f\5"+
-		"\64\33\2\u009f\u00a0\7\t\2\2\u00a0\u00a2\5\36\20\2\u00a1\u00a3\5&\24\2"+
-		"\u00a2\u00a1\3\2\2\2\u00a2\u00a3\3\2\2\2\u00a3%\3\2\2\2\u00a4\u00a7\7"+
-		",\2\2\u00a5\u00a8\5$\23\2\u00a6\u00a8\5\36\20\2\u00a7\u00a5\3\2\2\2\u00a7"+
-		"\u00a6\3\2\2\2\u00a8\'\3\2\2\2\u00a9\u00aa\7\62\2\2\u00aa\u00ab\7\b\2"+
-		"\2\u00ab\u00ac\5*\26\2\u00ac\u00ad\5,\27\2\u00ad\u00ae\5.\30\2\u00ae\u00af"+
-		"\7\t\2\2\u00af\u00b0\5\36\20\2\u00b0)\3\2\2\2\u00b1\u00b5\5\62\32\2\u00b2"+
-		"\u00b5\5\"\22\2\u00b3\u00b5\7\3\2\2\u00b4\u00b1\3\2\2\2\u00b4\u00b2\3"+
-		"\2\2\2\u00b4\u00b3\3\2\2\2\u00b5+\3\2\2\2\u00b6\u00b8\5\64\33\2\u00b7"+
-		"\u00b6\3\2\2\2\u00b7\u00b8\3\2\2\2\u00b8\u00b9\3\2\2\2\u00b9\u00ba\7\3"+
-		"\2\2\u00ba-\3\2\2\2\u00bb\u00bd\5\64\33\2\u00bc\u00bb\3\2\2\2\u00bc\u00bd"+
-		"\3\2\2\2\u00bd\u00be\3\2\2\2\u00be\u00bf\7\3\2\2\u00bf/\3\2\2\2\u00c0"+
-		"\u00c2\7\64\2\2\u00c1\u00c3\5\64\33\2\u00c2\u00c1\3\2\2\2\u00c2\u00c3"+
+		"\2\u009b#\3\2\2\2\u009c\u009d\7\37\2\2\u009d\u009e\7\7\2\2\u009e\u009f"+
+		"\5\64\33\2\u009f\u00a0\7\b\2\2\u00a0\u00a2\5\36\20\2\u00a1\u00a3\5&\24"+
+		"\2\u00a2\u00a1\3\2\2\2\u00a2\u00a3\3\2\2\2\u00a3%\3\2\2\2\u00a4\u00a7"+
+		"\7 \2\2\u00a5\u00a8\5$\23\2\u00a6\u00a8\5\36\20\2\u00a7\u00a5\3\2\2\2"+
+		"\u00a7\u00a6\3\2\2\2\u00a8\'\3\2\2\2\u00a9\u00aa\7&\2\2\u00aa\u00ab\7"+
+		"\7\2\2\u00ab\u00ac\5*\26\2\u00ac\u00ad\5,\27\2\u00ad\u00ae\5.\30\2\u00ae"+
+		"\u00af\7\b\2\2\u00af\u00b0\5\36\20\2\u00b0)\3\2\2\2\u00b1\u00b5\5\62\32"+
+		"\2\u00b2\u00b5\5\"\22\2\u00b3\u00b5\7\3\2\2\u00b4\u00b1\3\2\2\2\u00b4"+
+		"\u00b2\3\2\2\2\u00b4\u00b3\3\2\2\2\u00b5+\3\2\2\2\u00b6\u00b8\5\64\33"+
+		"\2\u00b7\u00b6\3\2\2\2\u00b7\u00b8\3\2\2\2\u00b8\u00b9\3\2\2\2\u00b9\u00ba"+
+		"\7\3\2\2\u00ba-\3\2\2\2\u00bb\u00bd\5\64\33\2\u00bc\u00bb\3\2\2\2\u00bc"+
+		"\u00bd\3\2\2\2\u00bd\u00be\3\2\2\2\u00be\u00bf\7\3\2\2\u00bf/\3\2\2\2"+
+		"\u00c0\u00c2\7(\2\2\u00c1\u00c3\5\64\33\2\u00c2\u00c1\3\2\2\2\u00c2\u00c3"+
 		"\3\2\2\2\u00c3\u00c4\3\2\2\2\u00c4\u00c5\7\3\2\2\u00c5\61\3\2\2\2\u00c6"+
-		"\u00c7\7\'\2\2\u00c7\u00c8\7=\2\2\u00c8\u00c9\7\6\2\2\u00c9\u00cc\5\34"+
-		"\17\2\u00ca\u00cb\7\7\2\2\u00cb\u00cd\5\64\33\2\u00cc\u00ca\3\2\2\2\u00cc"+
+		"\u00c7\7\33\2\2\u00c7\u00c8\7=\2\2\u00c8\u00c9\7\6\2\2\u00c9\u00cc\5\34"+
+		"\17\2\u00ca\u00cb\7\66\2\2\u00cb\u00cd\5\64\33\2\u00cc\u00ca\3\2\2\2\u00cc"+
 		"\u00cd\3\2\2\2\u00cd\u00ce\3\2\2\2\u00ce\u00cf\7\3\2\2\u00cf\63\3\2\2"+
-		"\2\u00d0\u00d1\b\33\1\2\u00d1\u00d2\7\b\2\2\u00d2\u00d3\5\64\33\2\u00d3"+
-		"\u00d4\7\t\2\2\u00d4\u00da\3\2\2\2\u00d5\u00d6\t\4\2\2\u00d6\u00da\5\64"+
+		"\2\u00d0\u00d1\b\33\1\2\u00d1\u00d2\7\7\2\2\u00d2\u00d3\5\64\33\2\u00d3"+
+		"\u00d4\7\b\2\2\u00d4\u00da\3\2\2\2\u00d5\u00d6\t\4\2\2\u00d6\u00da\5\64"+
 		"\33\13\u00d7\u00da\58\35\2\u00d8\u00da\7=\2\2\u00d9\u00d0\3\2\2\2\u00d9"+
 		"\u00d5\3\2\2\2\u00d9\u00d7\3\2\2\2\u00d9\u00d8\3\2\2\2\u00da\u00fb\3\2"+
 		"\2\2\u00db\u00dc\f\n\2\2\u00dc\u00dd\t\5\2\2\u00dd\u00fa\5\64\33\13\u00de"+
 		"\u00df\f\t\2\2\u00df\u00e0\t\6\2\2\u00e0\u00fa\5\64\33\n\u00e1\u00e2\f"+
 		"\b\2\2\u00e2\u00e3\t\7\2\2\u00e3\u00fa\5\64\33\t\u00e4\u00e5\f\7\2\2\u00e5"+
 		"\u00e6\t\b\2\2\u00e6\u00fa\5\64\33\b\u00e7\u00e8\f\6\2\2\u00e8\u00e9\t"+
-		"\t\2\2\u00e9\u00fa\5\64\33\7\u00ea\u00eb\f\5\2\2\u00eb\u00ec\7\7\2\2\u00ec"+
-		"\u00fa\5\64\33\6\u00ed\u00ee\f\16\2\2\u00ee\u00f2\7\b\2\2\u00ef\u00f1"+
-		"\5\66\34\2\u00f0\u00ef\3\2\2\2\u00f1\u00f4\3\2\2\2\u00f2\u00f0\3\2\2\2"+
-		"\u00f2\u00f3\3\2\2\2\u00f3\u00f5\3\2\2\2\u00f4\u00f2\3\2\2\2\u00f5\u00fa"+
-		"\7\t\2\2\u00f6\u00f7\f\r\2\2\u00f7\u00f8\7\13\2\2\u00f8\u00fa\7=\2\2\u00f9"+
-		"\u00db\3\2\2\2\u00f9\u00de\3\2\2\2\u00f9\u00e1\3\2\2\2\u00f9\u00e4\3\2"+
-		"\2\2\u00f9\u00e7\3\2\2\2\u00f9\u00ea\3\2\2\2\u00f9\u00ed\3\2\2\2\u00f9"+
-		"\u00f6\3\2\2\2\u00fa\u00fd\3\2\2\2\u00fb\u00f9\3\2\2\2\u00fb\u00fc\3\2"+
-		"\2\2\u00fc\65\3\2\2\2\u00fd\u00fb\3\2\2\2\u00fe\u0103\5\64\33\2\u00ff"+
-		"\u0100\7\n\2\2\u0100\u0102\5\64\33\2\u0101\u00ff\3\2\2\2\u0102\u0105\3"+
-		"\2\2\2\u0103\u0101\3\2\2\2\u0103\u0104\3\2\2\2\u0104\67\3\2\2\2\u0105"+
-		"\u0103\3\2\2\2\u0106\u0107\t\n\2\2\u01079\3\2\2\2\31>JRY`hot\177\u008c"+
-		"\u0097\u00a2\u00a7\u00b4\u00b7\u00bc\u00c2\u00cc\u00d9\u00f2\u00f9\u00fb"+
-		"\u0103";
+		"\t\2\2\u00e9\u00fa\5\64\33\7\u00ea\u00eb\f\5\2\2\u00eb\u00ec\7\66\2\2"+
+		"\u00ec\u00fa\5\64\33\6\u00ed\u00ee\f\16\2\2\u00ee\u00f2\7\7\2\2\u00ef"+
+		"\u00f1\5\66\34\2\u00f0\u00ef\3\2\2\2\u00f1\u00f4\3\2\2\2\u00f2\u00f0\3"+
+		"\2\2\2\u00f2\u00f3\3\2\2\2\u00f3\u00f5\3\2\2\2\u00f4\u00f2\3\2\2\2\u00f5"+
+		"\u00fa\7\b\2\2\u00f6\u00f7\f\r\2\2\u00f7\u00f8\7\n\2\2\u00f8\u00fa\7="+
+		"\2\2\u00f9\u00db\3\2\2\2\u00f9\u00de\3\2\2\2\u00f9\u00e1\3\2\2\2\u00f9"+
+		"\u00e4\3\2\2\2\u00f9\u00e7\3\2\2\2\u00f9\u00ea\3\2\2\2\u00f9\u00ed\3\2"+
+		"\2\2\u00f9\u00f6\3\2\2\2\u00fa\u00fd\3\2\2\2\u00fb\u00f9\3\2\2\2\u00fb"+
+		"\u00fc\3\2\2\2\u00fc\65\3\2\2\2\u00fd\u00fb\3\2\2\2\u00fe\u0103\5\64\33"+
+		"\2\u00ff\u0100\7\t\2\2\u0100\u0102\5\64\33\2\u0101\u00ff\3\2\2\2\u0102"+
+		"\u0105\3\2\2\2\u0103\u0101\3\2\2\2\u0103\u0104\3\2\2\2\u0104\67\3\2\2"+
+		"\2\u0105\u0103\3\2\2\2\u0106\u0107\t\n\2\2\u01079\3\2\2\2\31>JRY`hot\177"+
+		"\u008c\u0097\u00a2\u00a7\u00b4\u00b7\u00bc\u00c2\u00cc\u00d9\u00f2\u00f9"+
+		"\u00fb\u0103";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

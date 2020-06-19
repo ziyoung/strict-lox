@@ -126,7 +126,7 @@ expression
     | expression op=('>' | '<' | '>=' | '<=') expression    # Binary
     | expression op=('==' | '!=') expression                # Binary
     | expression op=('||' | '&&') expression                # Binary
-    | expression '=' expression                             # Assign
+    | expression op='=' expression                          # Binary
     | literal                                               # Liter
     | ID                                                    # Variable
     ;
@@ -173,6 +173,21 @@ WHILE: 'while';
 RETURN: 'return';
 CONTINUE: 'continue';
 BREAK: 'break';
+
+Less: '<';
+LessEqual: '<=';
+Greater: '>';
+GreaterEqual: '>=';
+Equal : '==';
+NotEqual : '!=';
+
+Plus : '+';
+Minus : '-';
+Star : '*';
+Div : '/';
+Mod : '%';
+
+Assign : '=';
 
 INT_LITERAL : '-'? INTEGER
     ;
