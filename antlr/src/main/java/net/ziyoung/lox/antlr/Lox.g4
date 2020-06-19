@@ -5,7 +5,11 @@ compilationUnit
     ;
 
 packageDeclaration
-    : 'package' ID ';'
+    : 'package' packageName ';'
+    ;
+
+packageName
+    : ID | CLASS_ID
     ;
 
 topLevelObject

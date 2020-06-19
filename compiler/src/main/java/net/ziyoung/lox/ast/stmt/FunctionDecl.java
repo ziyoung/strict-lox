@@ -4,9 +4,9 @@ import net.ziyoung.lox.ast.AstVisitor;
 import net.ziyoung.lox.ast.Identifier;
 import net.ziyoung.lox.ast.TypeNode;
 import net.ziyoung.lox.ast.expr.Parameter;
-import net.ziyoung.lox.ast.expr.VariableExpr;
 
 import java.util.List;
+import java.util.Map;
 
 public class FunctionDecl extends Decl {
     private final Identifier id;
@@ -40,5 +40,10 @@ public class FunctionDecl extends Decl {
     @Override
     public <R> R accept(AstVisitor<R> visitor) {
         return visitor.visitFunctionDecl(this);
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return updateNodeKind("FunctionDeclaration");
     }
 }

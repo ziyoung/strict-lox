@@ -23,6 +23,12 @@ public interface LoxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPackageDeclaration(LoxParser.PackageDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link LoxParser#packageName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPackageName(LoxParser.PackageNameContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link LoxParser#topLevelObject}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

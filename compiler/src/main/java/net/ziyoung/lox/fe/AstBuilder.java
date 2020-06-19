@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class AstBuilder extends LoxBaseVisitor<Node> {
     @Override
     public CompilationUnit visitCompilationUnit(LoxParser.CompilationUnitContext ctx) {
-        String packageName = ctx.packageDeclaration().ID().getText();
+        String packageName = ctx.packageDeclaration().packageName().getText();
         List<Decl> declList = ctx.topLevelObject()
                 .stream().map(this::visitTopLevelObject)
                 .collect(Collectors.toList());
@@ -26,7 +26,6 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
 
     @Override
     public Decl visitTopLevelObject(LoxParser.TopLevelObjectContext ctx) {
-//        return (Decl) visitChildren(ctx);
         if (ctx.classDeclaration() != null) {
             return visitClassDeclaration(ctx.classDeclaration());
         }
@@ -177,28 +176,28 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     @Override
     public Node visitLiter(LoxParser.LiterContext ctx) {
         LoxParser.LiteralContext literalContext = ctx.literal();
-        LiteralType kind;
+        LiteralType type;
         TerminalNode terminalNode;
         if (literalContext.BOOL_LITERAL() != null) {
             terminalNode = literalContext.BOOL_LITERAL();
-            kind = LiteralType.BOOL;
+            type = LiteralType.BOOL;
         } else if (literalContext.INT_LITERAL() != null) {
             terminalNode = literalContext.INT_LITERAL();
-            kind = LiteralType.INT;
+            type = LiteralType.INT;
         } else if (literalContext.DOUBLE_LITERAL() != null) {
             terminalNode = literalContext.DOUBLE_LITERAL();
-            kind = LiteralType.DOUBLE;
+            type = LiteralType.DOUBLE;
         } else if (literalContext.STRING_LITERAL() != null) {
             terminalNode = literalContext.STRING_LITERAL();
-            kind = LiteralType.STRING;
+            type = LiteralType.STRING;
         } else if (literalContext.NULL_LITERAL() != null) {
             terminalNode = literalContext.NULL_LITERAL();
-            kind = LiteralType.NULL;
+            type = LiteralType.NULL;
         } else {
             throw new RuntimeException("unreachable condition");
         }
 
-        return Literal.from(terminalNode, kind);
+        return Literal.from(terminalNode, type);
     }
 
     @Override
