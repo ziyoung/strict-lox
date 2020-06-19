@@ -4,6 +4,8 @@ import net.ziyoung.lox.ast.AstVisitor;
 import net.ziyoung.lox.ast.Expr;
 import net.ziyoung.lox.ast.Identifier;
 
+import java.util.Map;
+
 public class BinaryExpr extends Expr {
     private final Expr lhs;
     private final Identifier op;
@@ -30,5 +32,10 @@ public class BinaryExpr extends Expr {
     @Override
     public <R> R accept(AstVisitor<R> visitor) {
         return visitor.visitBinaryExpr(this);
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return updateNodeKind("BinaryExpression");
     }
 }

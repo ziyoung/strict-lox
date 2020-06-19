@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.Map;
 
 public class TypeNode extends Node {
-    public static TypeNode from(ParserRuleContext context) {
+    public static TypeNode of(ParserRuleContext context) {
         if (context == null) {
             return null;
         }

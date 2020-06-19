@@ -6,22 +6,28 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.Map;
 
 public class Identifier extends Node {
-    public static Identifier from(TerminalNode node) {
-        Identifier identifier = new Identifier(node.getText());
-        identifier.setPosition(node);
-        return identifier;
+    public static Identifier of(TerminalNode node) {
+        return new Identifier(node);
     }
 
-    public static Identifier from(Token token) {
-        Identifier identifier = new Identifier(token.getText());
-        identifier.setPosition(token);
-        return identifier;
+    public static Identifier of(Token token) {
+        return new Identifier(token);
     }
 
     private final String name;
 
     public Identifier(String name) {
         this.name = name;
+    }
+
+    public Identifier(TerminalNode node) {
+        this(node.getText());
+        setPosition(node);
+    }
+
+    public Identifier(Token token) {
+        this(token.getText());
+        setPosition(token);
     }
 
     public String getName() {
