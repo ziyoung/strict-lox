@@ -38,6 +38,13 @@ public class PreAnalyse extends AstBaseVisitor<Void> {
             }
         }
         FunctionType functionType = new FunctionType(name, returnType);
+        node.getParameterList().forEach(parameter -> {
+            Type type = globalSymbolTable.resolveType(parameter.getTypeNode());
+            if (type == null) {
+                semanticErrorList.add(parameter.getTypeNode().getPosition(), "unknown type " + parameter.getTypeNode().getName());
+            }
+            functionType.addArg(parameter.getId().getName(), type);
+        });
         FunctionSymbol functionSymbol = new FunctionSymbol(name, functionType);
         globalSymbolTable.defineSymbol(functionSymbol);
         return null;
