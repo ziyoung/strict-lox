@@ -1,5 +1,6 @@
 package net.ziyoung.lox.symbol;
 
+import net.ziyoung.lox.ast.TypeNode;
 import net.ziyoung.lox.builtin.PrintFunction;
 
 import java.util.LinkedHashMap;
@@ -24,6 +25,10 @@ public class GlobalSymbolTable {
 
     public Type resolveType(String name) {
         return typeMap.get(name);
+    }
+
+    public Type resolveType(TypeNode node) {
+        return resolveType(node.getName());
     }
 
     public void defineSymbol(Symbol symbol) {

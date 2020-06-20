@@ -2,7 +2,7 @@ package net.ziyoung.lox.compiler;
 
 import net.ziyoung.lox.antlr.LoxLexer;
 import net.ziyoung.lox.antlr.LoxParser;
-import net.ziyoung.lox.fe.AstBuilder;
+import net.ziyoung.lox.phase.AstBuilder;
 import net.ziyoung.lox.ast.CompilationUnit;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;

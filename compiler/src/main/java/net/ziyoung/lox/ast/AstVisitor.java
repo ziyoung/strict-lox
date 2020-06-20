@@ -47,4 +47,7 @@ public interface AstVisitor<R> {
     R visitVariableDecl(VariableDecl node);
 
     R visitCompilationUnit(CompilationUnit node);
+
+    // Helper function.
+    R visitDecl(Decl decl);
 }

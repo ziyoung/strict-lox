@@ -1,4 +1,4 @@
-package net.ziyoung.lox.fe;
+package net.ziyoung.lox.phase;
 
 import net.ziyoung.lox.antlr.LoxBaseVisitor;
 import net.ziyoung.lox.antlr.LoxParser;
