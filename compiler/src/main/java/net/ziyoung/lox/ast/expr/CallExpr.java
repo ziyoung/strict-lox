@@ -4,18 +4,19 @@ import net.ziyoung.lox.ast.AstVisitor;
 import net.ziyoung.lox.ast.Expr;
 
 import java.util.List;
+import java.util.Map;
 
 public class CallExpr extends Expr {
-    private final Expr fun;
+    private final Expr callee;
     private final List<Expr> argumentList;
 
-    public CallExpr(Expr fun, List<Expr> argumentList) {
-        this.fun = fun;
+    public CallExpr(Expr callee, List<Expr> argumentList) {
+        this.callee = callee;
         this.argumentList = argumentList;
     }
 
-    public Expr getFun() {
-        return fun;
+    public Expr getCallee() {
+        return callee;
     }
 
     public List<Expr> getArgumentList() {
@@ -25,5 +26,10 @@ public class CallExpr extends Expr {
     @Override
     public <R> R accept(AstVisitor<R> visitor) {
         return visitor.visitCallExpr(this);
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return updateNodeKind("CallExpression");
     }
 }

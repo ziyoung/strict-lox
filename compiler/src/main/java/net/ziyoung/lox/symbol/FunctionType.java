@@ -3,6 +3,7 @@ package net.ziyoung.lox.symbol;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class FunctionType implements Type {
     private final String name;
@@ -36,11 +37,26 @@ public class FunctionType implements Type {
         return returnType;
     }
 
+    public String getSignature() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("(");
+        if (argTypeList.size() != 0) {
+            StringJoiner stringJoiner = new StringJoiner(",");
+            argTypeList.forEach(type -> stringJoiner.add(type.getName()));
+            stringBuilder.append(stringJoiner.toString());
+        }
+        stringBuilder.append(")");
+        if (returnType != null) {
+            stringBuilder.append(returnType.getName());
+        }
+        return stringBuilder.toString();
+    }
+
     @Override
     public String getName() {
         return name;
     }
-    
+
     @Override
     public int getIndex() {
         return TypeKind.FUNCTION.getIndex();

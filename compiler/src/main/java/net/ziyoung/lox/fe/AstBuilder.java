@@ -7,7 +7,6 @@ import net.ziyoung.lox.ast.expr.*;
 import net.ziyoung.lox.ast.stmt.*;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +16,8 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     public CompilationUnit visitCompilationUnit(LoxParser.CompilationUnitContext ctx) {
         String packageName = ctx.packageDeclaration().packageName().getText();
         List<Decl> declList = ctx.topLevelObject()
-                .stream().map(this::visitTopLevelObject)
+                .stream()
+                .map(this::visitTopLevelObject)
                 .collect(Collectors.toList());
         return new CompilationUnit(packageName, declList);
     }
@@ -33,7 +33,7 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
         if (ctx.variableDeclaration() != null) {
             return visitVariableDeclaration(ctx.variableDeclaration());
         }
-        return null;
+        throw new RuntimeException(String.format("unknown TopLevelObject %s", ctx));
     }
 
     @Override
@@ -67,10 +67,10 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
         List<Parameter> parameterList = Collections.emptyList();
         TypeNode typeNode = TypeNode.of(ctx.type());
         if (ctx.typeParameters() != null) {
-            parameterList = new ArrayList<>();
-            for (LoxParser.TypeParameterContext parameterContext : ctx.typeParameters().typeParameter()) {
-                parameterList.add(visitTypeParameter(parameterContext));
-            }
+            parameterList = ctx.typeParameters().typeParameter()
+                    .stream()
+                    .map(this::visitTypeParameter)
+                    .collect(Collectors.toList());
         }
         BlockStmt blockStmt = visitBlockStatement(ctx.blockStatement());
         return new FunctionDecl(identifier, parameterList, typeNode, blockStmt);
@@ -92,18 +92,18 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     public BlockStmt visitBlockStatement(LoxParser.BlockStatementContext ctx) {
         List<Stmt> stmtList = Collections.emptyList();
         if (ctx.statement().size() != 0) {
-            stmtList = new ArrayList<>();
-            for (LoxParser.StatementContext statementContext : ctx.statement()) {
-                Stmt stmt = (Stmt) visitStatement(statementContext);
-                stmtList.add(stmt);
-            }
+            stmtList = ctx.statement()
+                    .stream()
+                    .map(statementContext -> (Stmt) visitStatement(statementContext))
+                    .collect(Collectors.toList());
         }
         return new BlockStmt(stmtList);
     }
 
     @Override
-    public Node visitExpressionStatement(LoxParser.ExpressionStatementContext ctx) {
-        return super.visitExpressionStatement(ctx);
+    public Stmt visitExpressionStatement(LoxParser.ExpressionStatementContext ctx) {
+        Expr expr = (Expr) visit(ctx.expression());
+        return new ExpressionStmt(expr);
     }
 
     @Override
@@ -157,20 +157,32 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
 
     @Override
     public Node visitGroup(LoxParser.GroupContext ctx) {
-        return super.visitGroup(ctx);
+        GroupExpr groupExpr = new GroupExpr((Expr) visit(ctx.expression()));
+        groupExpr.setPosition(ctx);
+        return groupExpr;
     }
 
     @Override
     public Node visitCall(LoxParser.CallContext ctx) {
-        Expr fun = (Expr) visit(ctx.expression());
-        List<Expr> argumentList = ctx.expressionList().stream().map(expressionListContext -> expressionListContext.expression(0));
-        return super.visitCall(ctx);
+        Expr callee = (Expr) visit(ctx.expression());
+        List<Expr> argumentList = Collections.emptyList();
+        if (ctx.expressionList().size() != 0) {
+            argumentList = ctx.expressionList(0)
+                    .expression()
+                    .stream()
+                    .map(expressionContext -> (Expr) visit(expressionContext))
+                    .collect(Collectors.toList());
+        }
+        CallExpr callExpr = new CallExpr(callee, argumentList);
+        callExpr.setPosition(ctx);
+        return callExpr;
     }
 
     @Override
     public Node visitVariable(LoxParser.VariableContext ctx) {
-        Identifier identifier = Identifier.of(ctx.ID());
-        return new VariableExpr(identifier);
+        VariableExpr variableExpr = new VariableExpr(Identifier.of(ctx.ID()));
+        variableExpr.setPosition(ctx);
+        return variableExpr;
     }
 
     @Override
@@ -205,10 +217,11 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
         Expr lhs = (Expr) visit(ctx.expression(0));
         Expr rhs = (Expr) visit(ctx.expression(1));
         Identifier op = Identifier.of(ctx.op);
-        if (ctx.op.getType() == LoxParser.Assign) {
-            return new AssignExpr(lhs, op, rhs);
-        }
-        return new BinaryExpr(lhs, op, rhs);
+        BinaryExpr binaryExpr = ctx.op.getType() == LoxParser.Assign
+                ? new AssignExpr(lhs, op, rhs)
+                : new BinaryExpr(lhs, op, rhs);
+        binaryExpr.setPosition(ctx);
+        return binaryExpr;
     }
 
     @Override
@@ -219,10 +232,5 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     @Override
     public Node visitUnary(LoxParser.UnaryContext ctx) {
         return super.visitUnary(ctx);
-    }
-
-    @Override
-    public Node visitExpressionList(LoxParser.ExpressionListContext ctx) {
-        return super.visitExpressionList(ctx);
     }
 }
