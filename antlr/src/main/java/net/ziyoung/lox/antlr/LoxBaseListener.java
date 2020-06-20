@@ -40,6 +40,18 @@ public class LoxBaseListener implements LoxListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPackageName(LoxParser.PackageNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPackageName(LoxParser.PackageNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterTopLevelObject(LoxParser.TopLevelObjectContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -347,18 +359,6 @@ public class LoxBaseListener implements LoxListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLiter(LoxParser.LiterContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAssign(LoxParser.AssignContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAssign(LoxParser.AssignContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

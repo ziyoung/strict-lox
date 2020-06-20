@@ -5,6 +5,8 @@ import net.ziyoung.lox.ast.Expr;
 import net.ziyoung.lox.ast.Identifier;
 import net.ziyoung.lox.ast.TypeNode;
 
+import java.util.Map;
+
 public class Parameter extends Expr {
     private final Identifier id;
     private final TypeNode typeNode;
@@ -25,5 +27,10 @@ public class Parameter extends Expr {
     @Override
     public <R> R accept(AstVisitor<R> visitor) {
         return visitor.visitParameter(this);
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return updateNodeKind("Parameter");
     }
 }
