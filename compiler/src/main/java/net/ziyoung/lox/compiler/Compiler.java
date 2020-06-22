@@ -13,8 +13,6 @@ import java.io.IOException;
 
 public class Compiler {
     private final String fileName;
-//    private LoxParser parser;
-//    private CompilationUnit compilationUnit;
 
     public Compiler(String fileName) {
         this.fileName = fileName;

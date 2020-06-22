@@ -1,8 +1,8 @@
 package net.ziyoung.lox.builtin;
 
-import net.ziyoung.lox.symbol.FunctionType;
-import net.ziyoung.lox.symbol.PrimitiveType;
-import net.ziyoung.lox.symbol.Type;
+import net.ziyoung.lox.type.FunctionType;
+import net.ziyoung.lox.type.PrimitiveType;
+import net.ziyoung.lox.type.Type;
 
 import java.util.ArrayList;
 import java.util.List;

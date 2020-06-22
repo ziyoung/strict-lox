@@ -1,17 +1,17 @@
-package net.ziyoung.lox.cmd;
+package net.ziyoung.lox.flag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Cmd {
-    private static final Logger logger = LoggerFactory.getLogger(Cmd.class);
+public class Flag {
+    private static final Logger logger = LoggerFactory.getLogger(Flag.class);
 
     private String fileName;
     private boolean inspect;
     private final String[] args;
     private boolean passed = false;
 
-    public Cmd(String[] args) {
+    public Flag(String[] args) {
         this.args = args;
     }
 
@@ -20,7 +20,7 @@ public class Cmd {
             logger.error("no arguments");
             return;
         }
-        for (String arg: args) {
+        for (String arg : args) {
             if ("-inspect".equals(arg)) {
                 inspect = true;
                 continue;

@@ -2,7 +2,7 @@ package net.ziyoung.lox;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.ziyoung.lox.ast.CompilationUnit;
-import net.ziyoung.lox.cmd.Cmd;
+import net.ziyoung.lox.flag.Flag;
 import net.ziyoung.lox.compiler.Compiler;
 import net.ziyoung.lox.phase.PreAnalyse;
 import net.ziyoung.lox.phase.SemanticErrorList;
@@ -17,13 +17,13 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws IOException {
-        Cmd cmd = new Cmd(args);
-        cmd.parse();
-        if (cmd.isPassed()) {
-            Compiler compiler = new Compiler(cmd.getFileName());
+        Flag flag = new Flag(args);
+        flag.parse();
+        if (flag.isPassed()) {
+            Compiler compiler = new Compiler(flag.getFileName());
             CompilationUnit compilationUnit = compiler.parse();
 
-            if (cmd.isInspect()) {
+            if (flag.isInspect()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.writerWithDefaultPrettyPrinter()
                         .writeValue(new File("ast.json"), compilationUnit);
@@ -35,7 +35,7 @@ public class Main {
             preAnalyse.visitCompilationUnit(compilationUnit);
 
             if (semanticErrorList.size() != 0) {
-                semanticErrorList.stream().forEach(logger::error);
+                semanticErrorList.stream().forEach(System.err::println);
             }
 
             System.out.println(globalSymbolTable.toString());

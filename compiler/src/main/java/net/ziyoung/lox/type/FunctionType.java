@@ -1,4 +1,4 @@
-package net.ziyoung.lox.symbol;
+package net.ziyoung.lox.type;
 
 import java.util.ArrayList;
 import java.util.Collections;

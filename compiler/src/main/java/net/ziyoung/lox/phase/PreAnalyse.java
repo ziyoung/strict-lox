@@ -5,17 +5,20 @@ import net.ziyoung.lox.ast.CompilationUnit;
 import net.ziyoung.lox.ast.TypeNode;
 import net.ziyoung.lox.ast.stmt.FunctionDecl;
 import net.ziyoung.lox.symbol.FunctionSymbol;
-import net.ziyoung.lox.symbol.FunctionType;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
-import net.ziyoung.lox.symbol.Type;
+import net.ziyoung.lox.type.FunctionType;
+import net.ziyoung.lox.type.Type;
+import net.ziyoung.lox.type.TypeChecker;
 
 public class PreAnalyse extends AstBaseVisitor<Void> {
     private final GlobalSymbolTable globalSymbolTable;
     private final SemanticErrorList semanticErrorList;
+    private final TypeChecker typeChecker;
 
     public PreAnalyse(GlobalSymbolTable globalSymbolTable, SemanticErrorList semanticErrorList) {
         this.globalSymbolTable = globalSymbolTable;
         this.semanticErrorList = semanticErrorList;
+        typeChecker = new TypeChecker(globalSymbolTable, semanticErrorList);
     }
 
     public GlobalSymbolTable getGlobalSymbolTable() {
@@ -30,19 +33,10 @@ public class PreAnalyse extends AstBaseVisitor<Void> {
     public Void visitFunctionDecl(FunctionDecl node) {
         String name = node.getId().getName();
         TypeNode typeNode = node.getReturnTypeNode();
-        Type returnType = null;
-        if (typeNode != null) {
-            returnType = globalSymbolTable.resolveType(typeNode);
-            if (returnType == null) {
-                semanticErrorList.add(typeNode.getPosition(), "unknown type " + typeNode.getName());
-            }
-        }
+        Type returnType = typeNode != null ? typeChecker.check(typeNode) : null;
         FunctionType functionType = new FunctionType(name, returnType);
         node.getParameterList().forEach(parameter -> {
-            Type type = globalSymbolTable.resolveType(parameter.getTypeNode());
-            if (type == null) {
-                semanticErrorList.add(parameter.getTypeNode().getPosition(), "unknown type " + parameter.getTypeNode().getName());
-            }
+            Type type = typeChecker.check(parameter.getTypeNode());
             functionType.addArg(parameter.getId().getName(), type);
         });
         FunctionSymbol functionSymbol = new FunctionSymbol(name, functionType);

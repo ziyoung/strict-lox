@@ -1,5 +1,7 @@
 package net.ziyoung.lox.symbol;
 
+import net.ziyoung.lox.type.FunctionType;
+
 import java.util.List;
 
 public class FunctionSymbol extends Symbol {

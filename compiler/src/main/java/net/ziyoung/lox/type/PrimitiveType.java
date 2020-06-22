@@ -1,4 +1,4 @@
-package net.ziyoung.lox.symbol;
+package net.ziyoung.lox.type;
 
 public enum PrimitiveType implements Type {
     BOOL(TypeKind.BOOL, 1),
@@ -16,7 +16,7 @@ public enum PrimitiveType implements Type {
 
     @Override
     public String getName() {
-        return this.name();
+        return kind.getName();
     }
 
     @Override
