@@ -35,6 +35,16 @@ public abstract class AstBaseVisitor<R> implements AstVisitor<R> {
     }
 
     @Override
+    public R visitParameter(Parameter node) {
+        return null;
+    }
+
+    @Override
+    public R visitAssignExpr(AssignExpr node) {
+        return null;
+    }
+
+    @Override
     public R visitMemberExpr(MemberExpr node) {
         return null;
     }
@@ -101,6 +111,26 @@ public abstract class AstBaseVisitor<R> implements AstVisitor<R> {
 
     @Override
     public R visitCompilationUnit(CompilationUnit node) {
+        return null;
+    }
+
+    @Override
+    public R visitDecl(Decl decl) {
+        if (decl instanceof VariableDecl) {
+            return visitVariableDecl((VariableDecl) decl);
+        }
+        if (decl instanceof FunctionDecl) {
+            return visitFunctionDecl((FunctionDecl) decl);
+        }
+        if (decl instanceof PropertyDecl) {
+            return visitPropertyDecl((PropertyDecl) decl);
+        }
+        if (decl instanceof MethodDecl) {
+            return visitMethodDecl((MethodDecl) decl);
+        }
+        if (decl instanceof ClassDecl) {
+            return visitClassDecl((ClassDecl) decl);
+        }
         return null;
     }
 }

@@ -1,5 +1,7 @@
 package net.ziyoung.lox.symbol;
 
+import net.ziyoung.lox.type.Type;
+
 public class Symbol {
     private final String name;
     private final Type type;

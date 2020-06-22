@@ -28,7 +28,7 @@ memberDeclaration
     ;
 
 propertyDeclaration
-    :  ID ':' type ('=' expression)? ';'
+    :  ID ':'  ('=' expression)? ';'
     ;
 
 functionDeclaration
@@ -61,7 +61,7 @@ type
     | FLOAT
     | DOUBLE
     | STRING
-    | ID
+    | CLASS_ID
     ;
 
 blockStatement

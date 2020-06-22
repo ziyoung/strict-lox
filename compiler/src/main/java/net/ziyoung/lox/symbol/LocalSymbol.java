@@ -1,5 +1,7 @@
 package net.ziyoung.lox.symbol;
 
+import net.ziyoung.lox.type.Type;
+
 public class LocalSymbol extends Symbol {
     private final int offset;
 

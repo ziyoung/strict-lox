@@ -1,4 +1,4 @@
-package net.ziyoung.lox.symbol;
+package net.ziyoung.lox.type;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +17,7 @@ public class FunctionType implements Type {
     }
 
     public void addArg(String name, Type type) {
-        if (argTypeList.size() != 0) {
+        if (argTypeList.size() == 0) {
             argTypeList = new ArrayList<>();
             argNameList = new ArrayList<>();
         }

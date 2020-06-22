@@ -1,6 +1,9 @@
 package net.ziyoung.lox.symbol;
 
+import net.ziyoung.lox.ast.TypeNode;
 import net.ziyoung.lox.builtin.PrintFunction;
+import net.ziyoung.lox.type.PrimitiveType;
+import net.ziyoung.lox.type.Type;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,7 +15,7 @@ public class GlobalSymbolTable {
     public GlobalSymbolTable() {
         typeMap = new LinkedHashMap<>();
         for (PrimitiveType type : PrimitiveType.values()) {
-            typeMap.put(type.name(), type);
+            typeMap.put(type.getName(), type);
         }
         global = new SymbolTable(null);
         defineSymbol(new FunctionSymbol("print", PrintFunction.functionTypeList));
@@ -26,6 +29,10 @@ public class GlobalSymbolTable {
         return typeMap.get(name);
     }
 
+    public Type resolveType(TypeNode node) {
+        return resolveType(node.getName());
+    }
+
     public void defineSymbol(Symbol symbol) {
         global.define(symbol);
     }
@@ -34,14 +41,26 @@ public class GlobalSymbolTable {
         return global.resolve(name);
     }
 
+    public Map<String, Type> getTypeMap() {
+        return typeMap;
+    }
+
+    public SymbolTable getGlobal() {
+        return global;
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("types:\n");
-        typeMap.values().forEach(type -> stringBuilder.append("\t- ").append(type.getName()).append("\n"));
-
+        typeMap.values()
+                .forEach(type ->
+                        stringBuilder.append("\t- ")
+                                .append(type.getName())
+                                .append("\n")
+                );
         stringBuilder.append("symbols:\n");
-        stringBuilder.append(global);
+        stringBuilder.append(global).append("\n");
         return stringBuilder.toString();
     }
 }

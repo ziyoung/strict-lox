@@ -1,0 +1,5 @@
+package main;
+
+fun main(i: X, j: Y, k: Z) {
+    print("unknown type");
+}
