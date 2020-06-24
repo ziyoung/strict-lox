@@ -6,6 +6,7 @@ public enum LiteralType {
     DOUBLE("double"),
     STRING("string"),
     NULL("null");
+
     private final String name;
 
     LiteralType(String name) {

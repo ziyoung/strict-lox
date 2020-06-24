@@ -48,6 +48,7 @@ public interface AstVisitor<R> {
 
     R visitCompilationUnit(CompilationUnit node);
 
-    // Helper function.
+    R visitExpr(Expr expr);
+
     R visitDecl(Decl decl);
 }

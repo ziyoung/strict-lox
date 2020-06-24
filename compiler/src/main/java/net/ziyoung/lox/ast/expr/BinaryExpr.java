@@ -3,6 +3,7 @@ package net.ziyoung.lox.ast.expr;
 import net.ziyoung.lox.ast.AstVisitor;
 import net.ziyoung.lox.ast.Expr;
 import net.ziyoung.lox.ast.Identifier;
+import net.ziyoung.lox.type.Type;
 
 import java.util.Map;
 
@@ -10,6 +11,8 @@ public class BinaryExpr extends Expr {
     private final Expr lhs;
     private final Identifier op;
     private final Expr rhs;
+    private Type lhsPromotionType;
+    private Type rhsPromotionType;
 
     public BinaryExpr(Expr lhs, Identifier op, Expr rhs) {
         this.lhs = lhs;
@@ -27,6 +30,14 @@ public class BinaryExpr extends Expr {
 
     public Expr getRhs() {
         return rhs;
+    }
+
+    public Type getLhsPromotionType() {
+        return lhsPromotionType;
+    }
+
+    public Type getRhsPromotionType() {
+        return rhsPromotionType;
     }
 
     @Override

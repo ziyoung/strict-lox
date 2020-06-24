@@ -1,13 +1,31 @@
 package net.ziyoung.lox.phase;
 
-import net.ziyoung.lox.ast.AstBaseVisitor;
-import net.ziyoung.lox.ast.CompilationUnit;
-import net.ziyoung.lox.ast.Identifier;
-import net.ziyoung.lox.ast.TypeNode;
+import net.ziyoung.lox.ast.*;
 import net.ziyoung.lox.ast.expr.*;
 import net.ziyoung.lox.ast.stmt.*;
+import net.ziyoung.lox.symbol.GlobalSymbolTable;
+import net.ziyoung.lox.symbol.Symbol;
+import net.ziyoung.lox.symbol.SymbolTable;
+import net.ziyoung.lox.type.Type;
+import net.ziyoung.lox.type.TypeChecker;
+
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 public class Analyse extends AstBaseVisitor<Void> {
+
+    private final GlobalSymbolTable globalSymbolTable;
+    private final SemanticErrorList semanticErrorList;
+    private final TypeChecker typeChecker;
+    private final Map<Node, SymbolTable> nodeSymbolTableMap = new IdentityHashMap<>();
+    private SymbolTable curSymbolTable;
+
+    public Analyse(GlobalSymbolTable globalSymbolTable, SemanticErrorList semanticErrorList, TypeChecker typeChecker) {
+        this.globalSymbolTable = globalSymbolTable;
+        this.semanticErrorList = semanticErrorList;
+        this.typeChecker = typeChecker;
+    }
+
     @Override
     public Void visitTypeNode(TypeNode node) {
         return super.visitTypeNode(node);
@@ -110,11 +128,30 @@ public class Analyse extends AstBaseVisitor<Void> {
 
     @Override
     public Void visitVariableDecl(VariableDecl node) {
-        return super.visitVariableDecl(node);
+        Identifier id = node.getId();
+        if (curSymbolTable.resolve(id.getName()) != null) {
+            semanticErrorList.add(id.getPosition(), id.getName() + " has been declared");
+        }
+
+        Type lhsType = typeChecker.check(node.getTypeNode());
+        Type rhsType = null;
+
+        ExprVisitor exprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
+        Expr initializer = node.getInitializer();
+        if (initializer != null) {
+            rhsType = exprVisitor.visitExpr(node.getInitializer());
+        }
+        typeChecker.validateAssign(id, lhsType, rhsType);
+
+        Symbol symbol = new Symbol(id.getName(), lhsType);
+        curSymbolTable.define(symbol);
+        return null;
     }
 
     @Override
     public Void visitCompilationUnit(CompilationUnit node) {
-        return super.visitCompilationUnit(node);
+        curSymbolTable = globalSymbolTable.getGlobal();
+        node.getDeclList().forEach(this::visitDecl);
+        return null;
     }
 }

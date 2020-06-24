@@ -30,7 +30,7 @@ public class PreAnalyseTests {
 
         for (ListIterator<String> iterator = errorList.listIterator(); iterator.hasNext(); ) {
             String error = iterator.next();
-            String msg = "unknown type " + unknownTypes[iterator.previousIndex()];
+            String msg = String.format("Unknown type '%s'", unknownTypes[iterator.previousIndex()]);
             Assertions.assertTrue(error.contains(msg));
         }
     }

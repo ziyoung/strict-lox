@@ -209,7 +209,7 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
             throw new RuntimeException("unreachable condition");
         }
 
-        return Literal.from(terminalNode, type);
+        return Literal.of(terminalNode, type);
     }
 
     @Override

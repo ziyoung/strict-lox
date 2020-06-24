@@ -33,7 +33,7 @@ public class PreAnalyse extends AstBaseVisitor<Void> {
     public Void visitFunctionDecl(FunctionDecl node) {
         String name = node.getId().getName();
         TypeNode typeNode = node.getReturnTypeNode();
-        Type returnType = typeNode != null ? typeChecker.check(typeNode) : null;
+        Type returnType = typeChecker.check(typeNode);
         FunctionType functionType = new FunctionType(name, returnType);
         node.getParameterList().forEach(parameter -> {
             Type type = typeChecker.check(parameter.getTypeNode());

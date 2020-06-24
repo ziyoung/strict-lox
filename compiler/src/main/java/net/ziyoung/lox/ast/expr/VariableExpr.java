@@ -13,8 +13,8 @@ public class VariableExpr extends Expr {
         this.id = id;
     }
 
-    public Identifier getId() {
-        return id;
+    public String getName() {
+        return id.getName();
     }
 
     @Override
