@@ -16,7 +16,7 @@ public class PreAnalyseTests {
     @Test
     @DisplayName("check parameters")
     void checkParameters() {
-        Compiler compiler = new Compiler("src/test/resources/unknown-type.lox");
+        Compiler compiler = new Compiler("src/test/resources/pre-analyse-parameter.lox");
         CompilationUnit compilationUnit = Assertions.assertDoesNotThrow(compiler::parse);
         System.out.println(compilationUnit);
         GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
@@ -24,13 +24,21 @@ public class PreAnalyseTests {
         PreAnalyse preAnalyse = new PreAnalyse(globalSymbolTable, semanticErrorList);
         preAnalyse.visitCompilationUnit(compilationUnit);
 
-        String[] unknownTypes = new String[]{"X", "Y", "Z"};
+        String[] names = new String[]{
+                "X", "Y", "Z", // fun main
+                "i", "j" // fun dup
+        };
         List<String> errorList = semanticErrorList.stream().collect(Collectors.toList());
-        Assertions.assertEquals(unknownTypes.length, errorList.size());
+        Assertions.assertEquals(names.length, errorList.size());
 
         for (ListIterator<String> iterator = errorList.listIterator(); iterator.hasNext(); ) {
             String error = iterator.next();
-            String msg = String.format("Unknown type '%s'", unknownTypes[iterator.previousIndex()]);
+            String msg;
+            if (iterator.previousIndex() >= 3) {
+                msg = String.format("Duplicated parameter '%s'", names[iterator.previousIndex()]);
+            } else  {
+                msg = String.format("Unknown type '%s'", names[iterator.previousIndex()]);
+            }
             Assertions.assertTrue(error.contains(msg));
         }
     }

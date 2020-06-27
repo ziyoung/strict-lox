@@ -3,13 +3,13 @@ package net.ziyoung.lox.phase;
 import net.ziyoung.lox.ast.*;
 import net.ziyoung.lox.ast.expr.*;
 import net.ziyoung.lox.ast.stmt.*;
-import net.ziyoung.lox.symbol.GlobalSymbolTable;
-import net.ziyoung.lox.symbol.Symbol;
-import net.ziyoung.lox.symbol.SymbolTable;
+import net.ziyoung.lox.symbol.*;
+import net.ziyoung.lox.type.FunctionType;
 import net.ziyoung.lox.type.Type;
 import net.ziyoung.lox.type.TypeChecker;
 
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Analyse extends AstBaseVisitor<Void> {
@@ -93,7 +93,9 @@ public class Analyse extends AstBaseVisitor<Void> {
 
     @Override
     public Void visitExpressionStmt(ExpressionStmt node) {
-        return super.visitExpressionStmt(node);
+        ExprVisitor exprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
+        exprVisitor.visitExpr(node.getExpr());
+        return null;
     }
 
     @Override
@@ -103,7 +105,28 @@ public class Analyse extends AstBaseVisitor<Void> {
 
     @Override
     public Void visitFunctionDecl(FunctionDecl node) {
-        return super.visitFunctionDecl(node);
+        String name = node.getId().getName();
+        FunctionSymbol functionSymbol = (FunctionSymbol) curSymbolTable.resolve(name);
+        if (functionSymbol == null) {
+            throw new RuntimeException("FunctionSymbol is required");
+        }
+
+        SymbolTable prevSymbolTable = curSymbolTable;
+        try {
+            curSymbolTable = new SymbolTable(prevSymbolTable);
+            int offset = 0;
+            FunctionType functionType = (FunctionType) functionSymbol.getType();
+            List<String> nameList = functionType.getArgNameList();
+            List<Type> typeList = functionType.getArgTypeList();
+            for (int i = 0; i < nameList.size(); i++) {
+                LocalSymbol localSymbol = new LocalSymbol(nameList.get(i), typeList.get(i), offset);
+                offset += typeList.get(i).getSlotSize();
+                curSymbolTable.define(localSymbol);
+            }
+        } finally {
+            curSymbolTable = prevSymbolTable;
+        }
+        return null;
     }
 
     @Override

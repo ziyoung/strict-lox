@@ -25,6 +25,10 @@ public class FunctionType implements Type {
         argTypeList.add(type);
     }
 
+    public boolean containsArgName(String name) {
+        return argNameList.contains(name);
+    }
+
     public List<String> getArgNameList() {
         return argNameList;
     }
