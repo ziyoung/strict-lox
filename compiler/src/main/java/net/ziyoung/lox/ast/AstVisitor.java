@@ -8,7 +8,7 @@ public interface AstVisitor<R> {
 
     R visitIdentifier(Identifier node);
 
-    R visitParameter(Parameter node);
+    R visitParameterExpr(ParameterExpr node);
 
     R visitBinaryExpr(BinaryExpr node);
 
@@ -51,4 +51,6 @@ public interface AstVisitor<R> {
     R visitExpr(Expr expr);
 
     R visitDecl(Decl decl);
+
+    R visitStmt(Stmt stmt);
 }

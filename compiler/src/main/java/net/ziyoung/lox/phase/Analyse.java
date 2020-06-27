@@ -1,12 +1,18 @@
 package net.ziyoung.lox.phase;
 
 import net.ziyoung.lox.ast.*;
-import net.ziyoung.lox.ast.expr.*;
+import net.ziyoung.lox.ast.expr.AssignExpr;
+import net.ziyoung.lox.ast.expr.CallExpr;
 import net.ziyoung.lox.ast.stmt.*;
-import net.ziyoung.lox.symbol.*;
+import net.ziyoung.lox.symbol.FunctionSymbol;
+import net.ziyoung.lox.symbol.GlobalSymbolTable;
+import net.ziyoung.lox.symbol.Symbol;
+import net.ziyoung.lox.symbol.SymbolTable;
 import net.ziyoung.lox.type.FunctionType;
 import net.ziyoung.lox.type.Type;
 import net.ziyoung.lox.type.TypeChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -14,11 +20,14 @@ import java.util.Map;
 
 public class Analyse extends AstBaseVisitor<Void> {
 
+    private static final Logger logger = LoggerFactory.getLogger(Analyse.class);
+
     private final GlobalSymbolTable globalSymbolTable;
     private final SemanticErrorList semanticErrorList;
     private final TypeChecker typeChecker;
     private final Map<Node, SymbolTable> nodeSymbolTableMap = new IdentityHashMap<>();
     private SymbolTable curSymbolTable;
+    private ExprVisitor curExprVisitor;
 
     public Analyse(GlobalSymbolTable globalSymbolTable, SemanticErrorList semanticErrorList, TypeChecker typeChecker) {
         this.globalSymbolTable = globalSymbolTable;
@@ -26,59 +35,40 @@ public class Analyse extends AstBaseVisitor<Void> {
         this.typeChecker = typeChecker;
     }
 
-    @Override
-    public Void visitTypeNode(TypeNode node) {
-        return super.visitTypeNode(node);
-    }
-
-    @Override
-    public Void visitIdentifier(Identifier node) {
-        return super.visitIdentifier(node);
-    }
-
-    @Override
-    public Void visitBinaryExpr(BinaryExpr node) {
-        return super.visitBinaryExpr(node);
+    public Map<Node, SymbolTable> getNodeSymbolTableMap() {
+        return nodeSymbolTableMap;
     }
 
     @Override
     public Void visitCallExpr(CallExpr node) {
-        return super.visitCallExpr(node);
-    }
+        Type calleeType = curExprVisitor.visitExpr(node.getCallee());
+        if (calleeType == null) {
+            semanticErrorList.add(node.getPosition(), "Undefined function");
+        } else if (calleeType instanceof FunctionType) {
+            FunctionType functionType = (FunctionType) calleeType;
+            List<FunctionType.Parameter> parameterList = functionType.getParameterList();
+            List<Expr> argumentList = node.getArgumentList();
 
-    @Override
-    public Void visitGroupExpr(GroupExpr node) {
-        return super.visitGroupExpr(node);
-    }
-
-    @Override
-    public Void visitLiteral(Literal node) {
-        return super.visitLiteral(node);
-    }
-
-    @Override
-    public Void visitParameter(Parameter node) {
-        return super.visitParameter(node);
+            if (parameterList.size() == argumentList.size()) {
+                for (int i = 0; i < parameterList.size(); i++) {
+                    Type parameterType = parameterList.get(i).getType();
+                    Type argType = curExprVisitor.visitExpr(argumentList.get(i));
+                    if (parameterType != null && parameterType != argType) {
+                        semanticErrorList.add(argumentList.get(i).getPosition(), String.format("Argument of type 'xxx' is not assignable to parameter of type '%s'", parameterType));
+                    }
+                }
+            } else {
+                semanticErrorList.add(node.getPosition(), "Unmatched parameter size");
+            }
+        } else {
+            semanticErrorList.add(node.getPosition(), "Can only call function or method");
+        }
+        return null;
     }
 
     @Override
     public Void visitAssignExpr(AssignExpr node) {
         return super.visitAssignExpr(node);
-    }
-
-    @Override
-    public Void visitMemberExpr(MemberExpr node) {
-        return super.visitMemberExpr(node);
-    }
-
-    @Override
-    public Void visitUnaryExpr(UnaryExpr node) {
-        return super.visitUnaryExpr(node);
-    }
-
-    @Override
-    public Void visitVariableExpr(VariableExpr node) {
-        return super.visitVariableExpr(node);
     }
 
     @Override
@@ -93,8 +83,12 @@ public class Analyse extends AstBaseVisitor<Void> {
 
     @Override
     public Void visitExpressionStmt(ExpressionStmt node) {
-        ExprVisitor exprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
-        exprVisitor.visitExpr(node.getExpr());
+        if (node.getExpr().usedAsStmt()) {
+            ExprVisitor exprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
+            exprVisitor.visitExpr(node.getExpr());
+        } else {
+            semanticErrorList.add(node.getPosition(), "Expression can't be used as statement");
+        }
         return null;
     }
 
@@ -113,16 +107,17 @@ public class Analyse extends AstBaseVisitor<Void> {
 
         SymbolTable prevSymbolTable = curSymbolTable;
         try {
-            curSymbolTable = new SymbolTable(prevSymbolTable);
-            int offset = 0;
+            curSymbolTable = new SymbolTable(prevSymbolTable, 0);
+            nodeSymbolTableMap.put(node, curSymbolTable);
+            curExprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
+
             FunctionType functionType = (FunctionType) functionSymbol.getType();
-            List<String> nameList = functionType.getArgNameList();
-            List<Type> typeList = functionType.getArgTypeList();
-            for (int i = 0; i < nameList.size(); i++) {
-                LocalSymbol localSymbol = new LocalSymbol(nameList.get(i), typeList.get(i), offset);
-                offset += typeList.get(i).getSlotSize();
-                curSymbolTable.define(localSymbol);
-            }
+            functionType.getParameterList().forEach(parameter -> {
+                Symbol symbol = new Symbol(parameter.getName(), parameter.getType());
+                curSymbolTable.define(symbol);
+            });
+            // FIXME: use visitBlockStmt.
+            node.getBody().getStmtList().forEach(this::visitStmt);
         } finally {
             curSymbolTable = prevSymbolTable;
         }
@@ -159,21 +154,22 @@ public class Analyse extends AstBaseVisitor<Void> {
         Type lhsType = typeChecker.check(node.getTypeNode());
         Type rhsType = null;
 
-        ExprVisitor exprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
         Expr initializer = node.getInitializer();
         if (initializer != null) {
-            rhsType = exprVisitor.visitExpr(node.getInitializer());
+            rhsType = curExprVisitor.visitExpr(node.getInitializer());
         }
         typeChecker.validateAssign(id, lhsType, rhsType);
 
         Symbol symbol = new Symbol(id.getName(), lhsType);
         curSymbolTable.define(symbol);
+        logger.info("symbol is {}", symbol.getName());
         return null;
     }
 
     @Override
     public Void visitCompilationUnit(CompilationUnit node) {
         curSymbolTable = globalSymbolTable.getGlobal();
+        curExprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
         node.getDeclList().forEach(this::visitDecl);
         return null;
     }

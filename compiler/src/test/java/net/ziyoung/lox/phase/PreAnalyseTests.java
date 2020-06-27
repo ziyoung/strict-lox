@@ -18,7 +18,6 @@ public class PreAnalyseTests {
     void checkParameters() {
         Compiler compiler = new Compiler("src/test/resources/pre-analyse-parameter.lox");
         CompilationUnit compilationUnit = Assertions.assertDoesNotThrow(compiler::parse);
-        System.out.println(compilationUnit);
         GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
         SemanticErrorList semanticErrorList = new SemanticErrorList();
         PreAnalyse preAnalyse = new PreAnalyse(globalSymbolTable, semanticErrorList);
@@ -36,7 +35,7 @@ public class PreAnalyseTests {
             String msg;
             if (iterator.previousIndex() >= 3) {
                 msg = String.format("Duplicated parameter '%s'", names[iterator.previousIndex()]);
-            } else  {
+            } else {
                 msg = String.format("Unknown type '%s'", names[iterator.previousIndex()]);
             }
             Assertions.assertTrue(error.contains(msg));

@@ -8,6 +8,7 @@ import net.ziyoung.lox.type.Type;
 import java.util.Map;
 
 public class BinaryExpr extends Expr {
+
     private final Expr lhs;
     private final Identifier op;
     private final Expr rhs;

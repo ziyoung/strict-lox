@@ -35,7 +35,7 @@ public abstract class AstBaseVisitor<R> implements AstVisitor<R> {
     }
 
     @Override
-    public R visitParameter(Parameter node) {
+    public R visitParameterExpr(ParameterExpr node) {
         return null;
     }
 
@@ -122,5 +122,10 @@ public abstract class AstBaseVisitor<R> implements AstVisitor<R> {
     @Override
     public R visitDecl(Decl decl) {
         return decl.accept(this);
+    }
+
+    @Override
+    public R visitStmt(Stmt stmt) {
+        return stmt.accept(this);
     }
 }

@@ -64,16 +64,16 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     @Override
     public FunctionDecl visitFunctionPart(LoxParser.FunctionPartContext ctx) {
         Identifier identifier = Identifier.of(ctx.ID());
-        List<Parameter> parameterList = Collections.emptyList();
+        List<ParameterExpr> parameterExprList = Collections.emptyList();
         TypeNode typeNode = TypeNode.of(ctx.type());
         if (ctx.typeParameters() != null) {
-            parameterList = ctx.typeParameters().typeParameter()
+            parameterExprList = ctx.typeParameters().typeParameter()
                     .stream()
                     .map(this::visitTypeParameter)
                     .collect(Collectors.toList());
         }
         BlockStmt blockStmt = visitBlockStatement(ctx.blockStatement());
-        return new FunctionDecl(identifier, parameterList, typeNode, blockStmt);
+        return new FunctionDecl(identifier, parameterExprList, typeNode, blockStmt);
     }
 
     @Override
@@ -82,10 +82,10 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
     }
 
     @Override
-    public Parameter visitTypeParameter(LoxParser.TypeParameterContext ctx) {
+    public ParameterExpr visitTypeParameter(LoxParser.TypeParameterContext ctx) {
         Identifier identifier = Identifier.of(ctx.ID());
         TypeNode typeNode = TypeNode.of(ctx.type());
-        return new Parameter(identifier, typeNode);
+        return new ParameterExpr(identifier, typeNode);
     }
 
     @Override

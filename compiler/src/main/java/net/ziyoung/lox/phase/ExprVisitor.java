@@ -84,8 +84,8 @@ public class ExprVisitor extends AstBaseVisitor<Type> {
     }
 
     @Override
-    public Type visitParameter(Parameter node) {
-        return super.visitParameter(node);
+    public Type visitParameterExpr(ParameterExpr node) {
+        return super.visitParameterExpr(node);
     }
 
     @Override

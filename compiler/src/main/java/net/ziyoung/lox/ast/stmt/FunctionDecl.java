@@ -3,20 +3,20 @@ package net.ziyoung.lox.ast.stmt;
 import net.ziyoung.lox.ast.AstVisitor;
 import net.ziyoung.lox.ast.Identifier;
 import net.ziyoung.lox.ast.TypeNode;
-import net.ziyoung.lox.ast.expr.Parameter;
+import net.ziyoung.lox.ast.expr.ParameterExpr;
 
 import java.util.List;
 import java.util.Map;
 
 public class FunctionDecl extends Decl {
     private final Identifier id;
-    private final List<Parameter> parameterList;
+    private final List<ParameterExpr> parameterExprList;
     private final TypeNode returnTypeNode;
     private final BlockStmt body;
 
-    public FunctionDecl(Identifier id, List<Parameter> parameterList, TypeNode returnTypeNode, BlockStmt body) {
+    public FunctionDecl(Identifier id, List<ParameterExpr> parameterExprList, TypeNode returnTypeNode, BlockStmt body) {
         this.id = id;
-        this.parameterList = parameterList;
+        this.parameterExprList = parameterExprList;
         this.returnTypeNode = returnTypeNode;
         this.body = body;
     }
@@ -25,8 +25,8 @@ public class FunctionDecl extends Decl {
         return id;
     }
 
-    public List<Parameter> getParameterList() {
-        return parameterList;
+    public List<ParameterExpr> getParameterExprList() {
+        return parameterExprList;
     }
 
     public TypeNode getReturnTypeNode() {

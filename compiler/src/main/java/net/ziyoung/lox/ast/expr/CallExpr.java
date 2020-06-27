@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CallExpr extends Expr {
+
     private final Expr callee;
     private final List<Expr> argumentList;
 
@@ -21,6 +22,11 @@ public class CallExpr extends Expr {
 
     public List<Expr> getArgumentList() {
         return argumentList;
+    }
+
+    @Override
+    public boolean usedAsStmt() {
+        return true;
     }
 
     @Override

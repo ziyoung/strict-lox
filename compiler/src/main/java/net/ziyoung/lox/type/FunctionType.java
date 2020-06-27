@@ -6,9 +6,27 @@ import java.util.List;
 import java.util.StringJoiner;
 
 public class FunctionType implements Type {
+
+    public static class Parameter {
+        private final String name;
+        private final Type type;
+
+        public Parameter(String name, Type type) {
+            this.name = name;
+            this.type = type;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Type getType() {
+            return type;
+        }
+    }
+
     private final String name;
-    private List<String> argNameList = Collections.emptyList();
-    private List<Type> argTypeList = Collections.emptyList();
+    private List<Parameter> parameterList = Collections.emptyList();
     private final Type returnType;
 
     public FunctionType(String name, Type returnType) {
@@ -17,24 +35,23 @@ public class FunctionType implements Type {
     }
 
     public void addArg(String name, Type type) {
-        if (argTypeList.size() == 0) {
-            argTypeList = new ArrayList<>();
-            argNameList = new ArrayList<>();
+        if (parameterList.size() == 0) {
+            parameterList = new ArrayList<>();
         }
-        argNameList.add(name);
-        argTypeList.add(type);
+        parameterList.add(new Parameter(name, type));
     }
 
     public boolean containsArgName(String name) {
-        return argNameList.contains(name);
+        for (Parameter parameter : parameterList) {
+            if (parameter.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public List<String> getArgNameList() {
-        return argNameList;
-    }
-
-    public List<Type> getArgTypeList() {
-        return argTypeList;
+    public List<Parameter> getParameterList() {
+        return parameterList;
     }
 
     public Type getReturnType() {
@@ -44,9 +61,9 @@ public class FunctionType implements Type {
     public String getSignature() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("(");
-        if (argTypeList.size() != 0) {
+        if (parameterList.size() != 0) {
             StringJoiner stringJoiner = new StringJoiner(",");
-            argTypeList.forEach(type -> stringJoiner.add(type.getName()));
+            parameterList.forEach(parameter -> stringJoiner.add(parameter.getType().getName()));
             stringBuilder.append(stringJoiner.toString());
         }
         stringBuilder.append(")");

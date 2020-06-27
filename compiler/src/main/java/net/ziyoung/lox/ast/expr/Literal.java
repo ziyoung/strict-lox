@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.Map;
 
 public class Literal extends Expr {
+
     public static Literal of(TerminalNode node, LiteralType type) {
         Literal literal = new Literal(node.getText(), type);
         literal.setPosition(node);

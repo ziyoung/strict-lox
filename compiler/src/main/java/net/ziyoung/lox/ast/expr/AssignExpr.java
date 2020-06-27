@@ -7,6 +7,7 @@ import net.ziyoung.lox.ast.Identifier;
 import java.util.Map;
 
 public class AssignExpr extends BinaryExpr {
+
     public AssignExpr(Expr lhs, Identifier op, Expr rhs) {
         super(lhs, op, rhs);
     }
@@ -14,6 +15,11 @@ public class AssignExpr extends BinaryExpr {
     @Override
     public <R> R accept(AstVisitor<R> visitor) {
         return visitor.visitAssignExpr(this);
+    }
+
+    @Override
+    public boolean usedAsStmt() {
+        return true;
     }
 
     @Override
