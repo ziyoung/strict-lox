@@ -8,8 +8,12 @@ import net.ziyoung.lox.symbol.SymbolTable;
 import net.ziyoung.lox.type.PrimitiveType;
 import net.ziyoung.lox.type.Type;
 import net.ziyoung.lox.type.TypeChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExprVisitor extends AstBaseVisitor<Type> {
+
+    private static final Logger logger = LoggerFactory.getLogger(ExprVisitor.class);
 
     private final SymbolTable symbolTable;
     private final SemanticErrorList semanticErrorList;
@@ -32,11 +36,6 @@ public class ExprVisitor extends AstBaseVisitor<Type> {
     @Override
     public Type visitBinaryExpr(BinaryExpr node) {
         return super.visitBinaryExpr(node);
-    }
-
-    @Override
-    public Type visitCallExpr(CallExpr node) {
-        return super.visitCallExpr(node);
     }
 
     @Override
@@ -100,6 +99,7 @@ public class ExprVisitor extends AstBaseVisitor<Type> {
             semanticErrorList.add(node.getPosition(), String.format("Variable '%s' has not been defined", node.getName()));
             return null;
         }
+        logger.info("name {}, symbol {} type {}", node.getName(), symbol, symbol.getType());
         return symbol.getType();
     }
 }

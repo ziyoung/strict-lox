@@ -58,19 +58,10 @@ public class FunctionType implements Type {
         return returnType;
     }
 
-    public String getSignature() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("(");
-        if (parameterList.size() != 0) {
-            StringJoiner stringJoiner = new StringJoiner(",");
-            parameterList.forEach(parameter -> stringJoiner.add(parameter.getType().getName()));
-            stringBuilder.append(stringJoiner.toString());
-        }
-        stringBuilder.append(")");
-        if (returnType != null) {
-            stringBuilder.append(returnType.getName());
-        }
-        return stringBuilder.toString();
+    public String getParameterSignature() {
+        StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
+        parameterList.forEach(parameter -> stringJoiner.add(parameter.getType().getName()));
+        return stringJoiner.toString();
     }
 
     @Override

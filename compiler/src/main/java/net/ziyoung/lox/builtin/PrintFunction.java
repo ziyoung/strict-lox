@@ -23,6 +23,4 @@ public class PrintFunction {
         functionType.addArg("arg0", type);
         return functionType;
     }
-
-
 }

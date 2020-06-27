@@ -3,6 +3,7 @@ package net.ziyoung.lox.phase;
 import net.ziyoung.lox.ast.AstBaseVisitor;
 import net.ziyoung.lox.ast.CompilationUnit;
 import net.ziyoung.lox.ast.Node;
+import net.ziyoung.lox.ast.stmt.BlockStmt;
 import net.ziyoung.lox.ast.stmt.FunctionDecl;
 import net.ziyoung.lox.compiler.Compiler;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
@@ -55,7 +56,15 @@ public class AnalyseTests {
             public Void visitFunctionDecl(FunctionDecl node) {
                 SymbolTable symbolTable1 = nodeSymbolTableMap.get(node);
                 Assertions.assertNotNull(symbolTable1);
-                Assertions.assertEquals(7, symbolTable1.getNextOffset());
+                Assertions.assertEquals(3, symbolTable1.getNextOffset());
+                return null;
+            }
+
+            @Override
+            public Void visitBlockStmt(BlockStmt node) {
+                SymbolTable symbolTable1 = nodeSymbolTableMap.get(node);
+                Assertions.assertNotNull(symbolTable1);
+                Assertions.assertEquals(10, symbolTable1.getNextOffset());
                 for (String name : names) {
                     Assertions.assertNotNull(symbolTable1.resolve(name));
                 }
