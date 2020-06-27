@@ -7,14 +7,15 @@ import net.ziyoung.lox.ast.Identifier;
 import java.util.Map;
 
 public class VariableExpr extends Expr {
+
     private final Identifier id;
 
     public VariableExpr(Identifier id) {
         this.id = id;
     }
 
-    public Identifier getId() {
-        return id;
+    public String getName() {
+        return id.getName();
     }
 
     @Override

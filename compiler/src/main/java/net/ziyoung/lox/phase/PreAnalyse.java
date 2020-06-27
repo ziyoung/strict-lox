@@ -2,6 +2,7 @@ package net.ziyoung.lox.phase;
 
 import net.ziyoung.lox.ast.AstBaseVisitor;
 import net.ziyoung.lox.ast.CompilationUnit;
+import net.ziyoung.lox.ast.Identifier;
 import net.ziyoung.lox.ast.TypeNode;
 import net.ziyoung.lox.ast.stmt.FunctionDecl;
 import net.ziyoung.lox.symbol.FunctionSymbol;
@@ -33,10 +34,15 @@ public class PreAnalyse extends AstBaseVisitor<Void> {
     public Void visitFunctionDecl(FunctionDecl node) {
         String name = node.getId().getName();
         TypeNode typeNode = node.getReturnTypeNode();
-        Type returnType = typeNode != null ? typeChecker.check(typeNode) : null;
+        Type returnType = typeChecker.check(typeNode);
         FunctionType functionType = new FunctionType(name, returnType);
-        node.getParameterList().forEach(parameter -> {
+        node.getParameterExprList().forEach(parameter -> {
             Type type = typeChecker.check(parameter.getTypeNode());
+            Identifier id = parameter.getId();
+            if (functionType.containsArgName(id.getName())) {
+                semanticErrorList.add(id.getPosition(), String.format("Duplicated parameter '%s'", id.getName()));
+                return;
+            }
             functionType.addArg(parameter.getId().getName(), type);
         });
         FunctionSymbol functionSymbol = new FunctionSymbol(name, functionType);

@@ -6,6 +6,7 @@ import net.ziyoung.lox.ast.Expr;
 import java.util.Map;
 
 public class GroupExpr extends Expr {
+
     private final Expr expr;
 
     public GroupExpr(Expr expr) {

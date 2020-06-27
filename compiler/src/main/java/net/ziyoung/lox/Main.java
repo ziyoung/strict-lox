@@ -2,19 +2,18 @@ package net.ziyoung.lox;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.ziyoung.lox.ast.CompilationUnit;
-import net.ziyoung.lox.flag.Flag;
 import net.ziyoung.lox.compiler.Compiler;
+import net.ziyoung.lox.flag.Flag;
+import net.ziyoung.lox.phase.Analyse;
 import net.ziyoung.lox.phase.PreAnalyse;
 import net.ziyoung.lox.phase.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.ziyoung.lox.type.TypeChecker;
 
 import java.io.File;
 import java.io.IOException;
 
 public class Main {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws IOException {
         Flag flag = new Flag(args);
@@ -34,11 +33,14 @@ public class Main {
             PreAnalyse preAnalyse = new PreAnalyse(globalSymbolTable, semanticErrorList);
             preAnalyse.visitCompilationUnit(compilationUnit);
 
+            TypeChecker typeChecker = new TypeChecker(globalSymbolTable, semanticErrorList);
+            Analyse analyse = new Analyse(globalSymbolTable, semanticErrorList, typeChecker);
+            analyse.visitCompilationUnit(compilationUnit);
+
+            System.out.println(globalSymbolTable.toString());
             if (semanticErrorList.size() != 0) {
                 semanticErrorList.stream().forEach(System.err::println);
             }
-
-            System.out.println(globalSymbolTable.toString());
         }
     }
 }
