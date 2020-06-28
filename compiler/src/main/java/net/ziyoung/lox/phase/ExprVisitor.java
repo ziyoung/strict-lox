@@ -3,6 +3,7 @@ package net.ziyoung.lox.phase;
 import net.ziyoung.lox.ast.AstBaseVisitor;
 import net.ziyoung.lox.ast.LiteralType;
 import net.ziyoung.lox.ast.expr.*;
+import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.Symbol;
 import net.ziyoung.lox.symbol.SymbolTable;
 import net.ziyoung.lox.type.PrimitiveType;

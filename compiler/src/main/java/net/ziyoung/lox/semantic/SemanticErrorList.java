@@ -1,4 +1,4 @@
-package net.ziyoung.lox.phase;
+package net.ziyoung.lox.semantic;
 
 import net.ziyoung.lox.ast.Position;
 

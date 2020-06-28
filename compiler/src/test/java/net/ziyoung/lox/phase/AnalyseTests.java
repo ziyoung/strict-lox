@@ -6,6 +6,8 @@ import net.ziyoung.lox.ast.Node;
 import net.ziyoung.lox.ast.stmt.BlockStmt;
 import net.ziyoung.lox.ast.stmt.FunctionDecl;
 import net.ziyoung.lox.compiler.Compiler;
+import net.ziyoung.lox.phase.context.AnalyseContext;
+import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
 import net.ziyoung.lox.symbol.SymbolTable;
 import net.ziyoung.lox.type.TypeChecker;
@@ -25,11 +27,12 @@ public class AnalyseTests {
 
         GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
         SemanticErrorList semanticErrorList = new SemanticErrorList();
-        PreAnalyse preAnalyse = new PreAnalyse(globalSymbolTable, semanticErrorList);
+        TypeChecker typeChecker = new TypeChecker(globalSymbolTable, semanticErrorList);
+        AnalyseContext analyseContext = new AnalyseContext(globalSymbolTable, semanticErrorList, typeChecker);
+        PreAnalyse preAnalyse = new PreAnalyse(analyseContext);
         preAnalyse.visitCompilationUnit(compilationUnit);
 
-        TypeChecker typeChecker = new TypeChecker(globalSymbolTable, semanticErrorList);
-        Analyse analyse = new Analyse(globalSymbolTable, semanticErrorList, typeChecker);
+        Analyse analyse = new Analyse(analyseContext);
         analyse.visitCompilationUnit(compilationUnit);
 
         String[] names = new String[]{"i", "l", "f", "d", "s"};

@@ -2,7 +2,10 @@ package net.ziyoung.lox.phase;
 
 import net.ziyoung.lox.ast.CompilationUnit;
 import net.ziyoung.lox.compiler.Compiler;
+import net.ziyoung.lox.phase.context.AnalyseContext;
+import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
+import net.ziyoung.lox.type.TypeChecker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +23,9 @@ public class PreAnalyseTests {
         CompilationUnit compilationUnit = Assertions.assertDoesNotThrow(compiler::parse);
         GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
         SemanticErrorList semanticErrorList = new SemanticErrorList();
-        PreAnalyse preAnalyse = new PreAnalyse(globalSymbolTable, semanticErrorList);
+        TypeChecker typeChecker = new TypeChecker(globalSymbolTable, semanticErrorList);
+        AnalyseContext analyseContext = new AnalyseContext(globalSymbolTable, semanticErrorList, typeChecker);
+        PreAnalyse preAnalyse = new PreAnalyse(analyseContext);
         preAnalyse.visitCompilationUnit(compilationUnit);
 
         String[] names = new String[]{

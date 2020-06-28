@@ -4,6 +4,8 @@ import net.ziyoung.lox.ast.*;
 import net.ziyoung.lox.ast.expr.AssignExpr;
 import net.ziyoung.lox.ast.expr.CallExpr;
 import net.ziyoung.lox.ast.stmt.*;
+import net.ziyoung.lox.phase.context.AnalyseContext;
+import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.FunctionSymbol;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
 import net.ziyoung.lox.symbol.Symbol;
@@ -31,10 +33,10 @@ public class Analyse extends AstBaseVisitor<Void> {
     private SymbolTable curSymbolTable;
     private ExprVisitor curExprVisitor;
 
-    public Analyse(GlobalSymbolTable globalSymbolTable, SemanticErrorList semanticErrorList, TypeChecker typeChecker) {
-        this.globalSymbolTable = globalSymbolTable;
-        this.semanticErrorList = semanticErrorList;
-        this.typeChecker = typeChecker;
+    public Analyse(AnalyseContext analyseContext) {
+        this.globalSymbolTable = analyseContext.getGlobalSymbolTable();
+        this.semanticErrorList = analyseContext.getSemanticErrorList();
+        this.typeChecker = analyseContext.getTypeChecker();
     }
 
     public Map<Node, SymbolTable> getNodeSymbolTableMap() {

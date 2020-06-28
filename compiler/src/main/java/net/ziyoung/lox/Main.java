@@ -6,7 +6,8 @@ import net.ziyoung.lox.compiler.Compiler;
 import net.ziyoung.lox.flag.Flag;
 import net.ziyoung.lox.phase.Analyse;
 import net.ziyoung.lox.phase.PreAnalyse;
-import net.ziyoung.lox.phase.SemanticErrorList;
+import net.ziyoung.lox.phase.context.AnalyseContext;
+import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
 import net.ziyoung.lox.type.TypeChecker;
 
@@ -30,11 +31,13 @@ public class Main {
 
             GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
             SemanticErrorList semanticErrorList = new SemanticErrorList();
-            PreAnalyse preAnalyse = new PreAnalyse(globalSymbolTable, semanticErrorList);
+            TypeChecker typeChecker = new TypeChecker(globalSymbolTable, semanticErrorList);
+            AnalyseContext analyseContext = new AnalyseContext(globalSymbolTable, semanticErrorList, typeChecker);
+
+            PreAnalyse preAnalyse = new PreAnalyse(analyseContext);
             preAnalyse.visitCompilationUnit(compilationUnit);
 
-            TypeChecker typeChecker = new TypeChecker(globalSymbolTable, semanticErrorList);
-            Analyse analyse = new Analyse(globalSymbolTable, semanticErrorList, typeChecker);
+            Analyse analyse = new Analyse(analyseContext);
             analyse.visitCompilationUnit(compilationUnit);
 
             System.out.println(globalSymbolTable.toString());

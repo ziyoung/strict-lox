@@ -50,4 +50,9 @@ public class BinaryExpr extends Expr {
     public Map<String, String> getProperties() {
         return updateNodeKind("BinaryExpression");
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %s", lhs, op.getName(), rhs);
+    }
 }

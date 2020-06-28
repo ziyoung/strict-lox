@@ -2,7 +2,7 @@ package net.ziyoung.lox.type;
 
 import net.ziyoung.lox.ast.Node;
 import net.ziyoung.lox.ast.TypeNode;
-import net.ziyoung.lox.phase.SemanticErrorList;
+import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
 
 public class TypeChecker {
@@ -29,6 +29,7 @@ public class TypeChecker {
         if (lhsType == null || rhsType == null) {
             return;
         }
+        // FIXME: support type prompt.
         if (!lhsType.equals(rhsType)) {
             semanticErrorList.add(node.getPosition(), String.format("type '%s' is not assignable to type '%s'", rhsType, lhsType));
         }

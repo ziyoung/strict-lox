@@ -33,4 +33,9 @@ public class ParameterExpr extends Expr {
     public Map<String, String> getProperties() {
         return updateNodeKind("Parameter");
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s: %s", id.getName(), typeNode.getName());
+    }
 }

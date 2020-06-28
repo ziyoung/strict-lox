@@ -5,6 +5,8 @@ import net.ziyoung.lox.ast.CompilationUnit;
 import net.ziyoung.lox.ast.Identifier;
 import net.ziyoung.lox.ast.TypeNode;
 import net.ziyoung.lox.ast.stmt.FunctionDecl;
+import net.ziyoung.lox.phase.context.AnalyseContext;
+import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.FunctionSymbol;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
 import net.ziyoung.lox.type.FunctionType;
@@ -16,18 +18,10 @@ public class PreAnalyse extends AstBaseVisitor<Void> {
     private final SemanticErrorList semanticErrorList;
     private final TypeChecker typeChecker;
 
-    public PreAnalyse(GlobalSymbolTable globalSymbolTable, SemanticErrorList semanticErrorList) {
-        this.globalSymbolTable = globalSymbolTable;
-        this.semanticErrorList = semanticErrorList;
-        typeChecker = new TypeChecker(globalSymbolTable, semanticErrorList);
-    }
-
-    public GlobalSymbolTable getGlobalSymbolTable() {
-        return globalSymbolTable;
-    }
-
-    public SemanticErrorList getSemanticErrorList() {
-        return semanticErrorList;
+    public PreAnalyse(AnalyseContext analyseContext) {
+        this.globalSymbolTable = analyseContext.getGlobalSymbolTable();
+        this.semanticErrorList = analyseContext.getSemanticErrorList();
+        this.typeChecker = analyseContext.getTypeChecker();
     }
 
     @Override
