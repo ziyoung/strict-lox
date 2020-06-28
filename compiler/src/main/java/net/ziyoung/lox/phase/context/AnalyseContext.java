@@ -10,10 +10,10 @@ public class AnalyseContext {
     private final SemanticErrorList semanticErrorList;
     private final TypeChecker typeChecker;
 
-    public AnalyseContext(GlobalSymbolTable globalSymbolTable, SemanticErrorList semanticErrorList, TypeChecker typeChecker) {
+    public AnalyseContext(GlobalSymbolTable globalSymbolTable, SemanticErrorList semanticErrorList) {
         this.globalSymbolTable = globalSymbolTable;
         this.semanticErrorList = semanticErrorList;
-        this.typeChecker = typeChecker;
+        this.typeChecker = new TypeChecker(globalSymbolTable, semanticErrorList);
     }
 
     public GlobalSymbolTable getGlobalSymbolTable() {

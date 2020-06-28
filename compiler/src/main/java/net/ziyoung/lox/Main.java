@@ -9,7 +9,6 @@ import net.ziyoung.lox.phase.PreAnalyse;
 import net.ziyoung.lox.phase.context.AnalyseContext;
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
-import net.ziyoung.lox.type.TypeChecker;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,8 +30,7 @@ public class Main {
 
             GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
             SemanticErrorList semanticErrorList = new SemanticErrorList();
-            TypeChecker typeChecker = new TypeChecker(globalSymbolTable, semanticErrorList);
-            AnalyseContext analyseContext = new AnalyseContext(globalSymbolTable, semanticErrorList, typeChecker);
+            AnalyseContext analyseContext = new AnalyseContext(globalSymbolTable, semanticErrorList);
 
             PreAnalyse preAnalyse = new PreAnalyse(analyseContext);
             preAnalyse.visitCompilationUnit(compilationUnit);
