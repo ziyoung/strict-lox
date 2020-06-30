@@ -31,7 +31,7 @@ public class TypeChecker {
         }
         // FIXME: support type prompt.
         if (!lhsType.equals(rhsType)) {
-            semanticErrorList.add(node.getPosition(), String.format("type '%s' is not assignable to type '%s'", rhsType, lhsType));
+            semanticErrorList.add(node.getPosition(), String.format("Type '%s' is not assignable to type '%s'", rhsType, lhsType));
         }
     }
 }

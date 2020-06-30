@@ -2,16 +2,20 @@ package net.ziyoung.lox;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.ziyoung.lox.ast.CompilationUnit;
+import net.ziyoung.lox.ast.Node;
 import net.ziyoung.lox.compiler.Compiler;
 import net.ziyoung.lox.flag.Flag;
 import net.ziyoung.lox.phase.Analyse;
+import net.ziyoung.lox.phase.Generate;
 import net.ziyoung.lox.phase.PreAnalyse;
 import net.ziyoung.lox.phase.context.AnalyseContext;
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
+import net.ziyoung.lox.symbol.SymbolTable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 public class Main {
 
@@ -39,9 +43,14 @@ public class Main {
             analyse.visitCompilationUnit(compilationUnit);
 
             System.out.println(globalSymbolTable.toString());
-            if (semanticErrorList.size() != 0) {
-                semanticErrorList.stream().forEach(System.err::println);
+            if (!semanticErrorList.isEmpty()) {
+                semanticErrorList.forEach(System.err::println);
+                return;
             }
+
+            Map<Node, SymbolTable> nodeSymbolTableMap = analyse.getNodeSymbolTableMap();
+            Generate generate = new Generate(analyseContext, nodeSymbolTableMap);
+            generate.visitCompilationUnit(compilationUnit);
         }
     }
 }

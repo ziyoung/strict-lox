@@ -5,6 +5,7 @@ import net.ziyoung.lox.ast.expr.AssignExpr;
 import net.ziyoung.lox.ast.expr.CallExpr;
 import net.ziyoung.lox.ast.stmt.*;
 import net.ziyoung.lox.phase.context.AnalyseContext;
+import net.ziyoung.lox.phase.context.ExprVisitor;
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.FunctionSymbol;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
@@ -184,7 +185,7 @@ public class Analyse extends AstBaseVisitor<Void> {
     public Void visitVariableDecl(VariableDecl node) {
         Identifier id = node.getId();
         if (curSymbolTable.resolve(id.getName()) != null) {
-            semanticErrorList.add(id.getPosition(), id.getName() + " has been declared");
+            semanticErrorList.add(id.getPosition(), String.format("Variable %s has been declared", id.getName()));
         }
 
         Type lhsType = typeChecker.check(node.getTypeNode());

@@ -1,6 +1,7 @@
-package net.ziyoung.lox.phase;
+package net.ziyoung.lox.phase.context;
 
 import net.ziyoung.lox.ast.AstBaseVisitor;
+import net.ziyoung.lox.ast.Identifier;
 import net.ziyoung.lox.ast.LiteralType;
 import net.ziyoung.lox.ast.expr.*;
 import net.ziyoung.lox.semantic.SemanticErrorList;
@@ -36,7 +37,14 @@ public class ExprVisitor extends AstBaseVisitor<Type> {
 
     @Override
     public Type visitBinaryExpr(BinaryExpr node) {
-        return super.visitBinaryExpr(node);
+        Type lhsType = visitExpr(node.getLhs());
+        Type rhsType = visitExpr(node.getRhs());
+        Identifier op = node.getOp();
+        // TODO: type promotion
+        if (lhsType != null && lhsType != rhsType) {
+            semanticErrorList.add(op.getPosition(), String.format("Invalid operation: mismatched types '%s' and '%s'", lhsType, rhsType));
+        }
+        return lhsType;
     }
 
     @Override

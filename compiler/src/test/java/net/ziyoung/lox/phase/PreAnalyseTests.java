@@ -3,6 +3,7 @@ package net.ziyoung.lox.phase;
 import net.ziyoung.lox.ast.CompilationUnit;
 import net.ziyoung.lox.compiler.Compiler;
 import net.ziyoung.lox.phase.context.AnalyseContext;
+import net.ziyoung.lox.semantic.SemanticError;
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
 import org.junit.jupiter.api.Assertions;
@@ -30,7 +31,9 @@ public class PreAnalyseTests {
                 "X", "Y", "Z", // fun main
                 "i", "j" // fun dup
         };
-        List<String> errorList = semanticErrorList.stream().collect(Collectors.toList());
+        List<String> errorList = semanticErrorList.stream()
+                .map(SemanticError::toString)
+                .collect(Collectors.toList());
         Assertions.assertEquals(names.length, errorList.size());
 
         for (ListIterator<String> iterator = errorList.listIterator(); iterator.hasNext(); ) {
