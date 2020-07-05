@@ -26,43 +26,46 @@ public class Main {
         Flag flag = new Flag(args);
         flag.parse();
         if (flag.isPassed()) {
-            Compiler compiler = new Compiler(flag.getFileName());
-            CompilationUnit compilationUnit = compiler.parse();
+            return;
+        }
 
-            if (flag.isInspect()) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.writerWithDefaultPrettyPrinter()
-                        .writeValue(new File("ast.json"), compilationUnit);
-            }
+        Compiler compiler = new Compiler(flag.getFileName());
+        CompilationUnit compilationUnit = compiler.parse();
 
-            GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
-            SemanticErrorList semanticErrorList = new SemanticErrorList();
-            AnalyseContext analyseContext = new AnalyseContext(globalSymbolTable, semanticErrorList);
+        if (flag.isInspect()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writerWithDefaultPrettyPrinter()
+                    .writeValue(new File("ast.json"), compilationUnit);
+        }
 
-            PreAnalyse preAnalyse = new PreAnalyse(analyseContext);
-            preAnalyse.visitCompilationUnit(compilationUnit);
+        GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
+        SemanticErrorList semanticErrorList = new SemanticErrorList();
+        AnalyseContext analyseContext = new AnalyseContext(globalSymbolTable, semanticErrorList);
 
-            Analyse analyse = new Analyse(analyseContext);
-            analyse.visitCompilationUnit(compilationUnit);
+        PreAnalyse preAnalyse = new PreAnalyse(analyseContext);
+        preAnalyse.visitCompilationUnit(compilationUnit);
 
-            System.out.println(globalSymbolTable.toString());
-            if (!semanticErrorList.isEmpty()) {
-                semanticErrorList.forEach(System.err::println);
-                return;
-            }
+        Analyse analyse = new Analyse(analyseContext);
+        analyse.visitCompilationUnit(compilationUnit);
 
-            Map<Node, SymbolTable> nodeSymbolTableMap = analyse.getNodeSymbolTableMap();
-            ClassWriter classWriter = new ClassWriter(0);
-            Generate generate = new Generate(analyseContext, nodeSymbolTableMap, classWriter);
-            generate.visitCompilationUnit(compilationUnit);
-            classWriter.toByteArray();
+        System.out.println(globalSymbolTable.toString());
+        if (!semanticErrorList.isEmpty()) {
+            semanticErrorList.forEach(System.err::println);
+            return;
+        }
 
-            if (flag.isGenFile()) {
-                String classFileName = String.format("/target/%s.class", compilationUnit.getQualifiedName());
-                try (OutputStream outputStream = new FileOutputStream(classFileName)) {
-                    outputStream.write(classWriter.toByteArray());
-                }
+        Map<Node, SymbolTable> nodeSymbolTableMap = analyse.getNodeSymbolTableMap();
+        ClassWriter classWriter = new ClassWriter(0);
+        Generate generate = new Generate(analyseContext, nodeSymbolTableMap, classWriter);
+        generate.visitCompilationUnit(compilationUnit);
+        classWriter.toByteArray();
+
+        if (flag.isGenFile()) {
+            String classFileName = String.format("/target/%s.class", compilationUnit.getQualifiedName());
+            try (OutputStream outputStream = new FileOutputStream(classFileName)) {
+                outputStream.write(classWriter.toByteArray());
             }
         }
+
     }
 }

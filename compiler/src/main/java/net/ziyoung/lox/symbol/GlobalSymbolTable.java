@@ -2,7 +2,6 @@ package net.ziyoung.lox.symbol;
 
 import net.ziyoung.lox.ast.TypeNode;
 import net.ziyoung.lox.builtin.PrintFunction;
-import net.ziyoung.lox.type.OverloadFunctionType;
 import net.ziyoung.lox.type.PrimitiveType;
 import net.ziyoung.lox.type.Type;
 
@@ -10,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class GlobalSymbolTable {
+
     private final Map<String, Type> typeMap;
     private final SymbolTable global;
 
