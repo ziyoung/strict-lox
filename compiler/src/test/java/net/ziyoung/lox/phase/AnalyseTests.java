@@ -6,7 +6,6 @@ import net.ziyoung.lox.ast.Node;
 import net.ziyoung.lox.ast.stmt.BlockStmt;
 import net.ziyoung.lox.ast.stmt.FunctionDecl;
 import net.ziyoung.lox.compiler.Compiler;
-import net.ziyoung.lox.phase.context.AnalyseContext;
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
 import net.ziyoung.lox.symbol.SymbolTable;

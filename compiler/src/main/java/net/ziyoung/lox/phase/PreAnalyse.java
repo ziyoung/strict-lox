@@ -5,7 +5,6 @@ import net.ziyoung.lox.ast.CompilationUnit;
 import net.ziyoung.lox.ast.Identifier;
 import net.ziyoung.lox.ast.TypeNode;
 import net.ziyoung.lox.ast.stmt.FunctionDecl;
-import net.ziyoung.lox.phase.context.AnalyseContext;
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.FunctionSymbol;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;

@@ -31,7 +31,9 @@ public class AstBuilder extends LoxBaseVisitor<Node> {
             return visitFunctionDeclaration(ctx.functionDeclaration());
         }
         if (ctx.variableDeclaration() != null) {
-            return visitVariableDeclaration(ctx.variableDeclaration());
+            VariableDecl variableDecl = visitVariableDeclaration(ctx.variableDeclaration());
+            variableDecl.setTopLevel(true);
+            return variableDecl;
         }
         throw new RuntimeException(String.format("unknown TopLevelObject %s", ctx));
     }

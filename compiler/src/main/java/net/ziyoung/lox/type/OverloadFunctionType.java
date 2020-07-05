@@ -1,7 +1,6 @@
 package net.ziyoung.lox.type;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class OverloadFunctionType implements Type {
 
@@ -19,7 +18,7 @@ public class OverloadFunctionType implements Type {
 
     public FunctionType getFunctionType(String signature) {
         return functionTypeList.stream()
-                .filter(functionType1 -> functionType1.getParameterSignature().equals(signature))
+                .filter(functionType1 -> functionType1.getParameterDescriptor().equals(signature))
                 .findFirst()
                 .orElse(null);
     }
@@ -27,6 +26,11 @@ public class OverloadFunctionType implements Type {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getDescriptor() {
+        throw new RuntimeException("OverloadFunctionType has no descriptor");
     }
 
     @Override

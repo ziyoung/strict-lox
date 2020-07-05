@@ -8,13 +8,16 @@ import net.ziyoung.lox.flag.Flag;
 import net.ziyoung.lox.phase.Analyse;
 import net.ziyoung.lox.phase.Generate;
 import net.ziyoung.lox.phase.PreAnalyse;
-import net.ziyoung.lox.phase.context.AnalyseContext;
+import net.ziyoung.lox.phase.AnalyseContext;
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
 import net.ziyoung.lox.symbol.SymbolTable;
+import org.objectweb.asm.ClassWriter;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 public class Main {
@@ -49,8 +52,17 @@ public class Main {
             }
 
             Map<Node, SymbolTable> nodeSymbolTableMap = analyse.getNodeSymbolTableMap();
-            Generate generate = new Generate(analyseContext, nodeSymbolTableMap);
+            ClassWriter classWriter = new ClassWriter(0);
+            Generate generate = new Generate(analyseContext, nodeSymbolTableMap, classWriter);
             generate.visitCompilationUnit(compilationUnit);
+            classWriter.toByteArray();
+
+            if (flag.isGenFile()) {
+                String classFileName = String.format("/target/%s.class", compilationUnit.getQualifiedName());
+                try (OutputStream outputStream = new FileOutputStream(classFileName)) {
+                    outputStream.write(classWriter.toByteArray());
+                }
+            }
         }
     }
 }

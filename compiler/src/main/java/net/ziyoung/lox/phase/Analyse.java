@@ -4,8 +4,7 @@ import net.ziyoung.lox.ast.*;
 import net.ziyoung.lox.ast.expr.AssignExpr;
 import net.ziyoung.lox.ast.expr.CallExpr;
 import net.ziyoung.lox.ast.stmt.*;
-import net.ziyoung.lox.phase.context.AnalyseContext;
-import net.ziyoung.lox.phase.context.ExprVisitor;
+import net.ziyoung.lox.phase.visitor.ExprTypeResolver;
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.FunctionSymbol;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
@@ -32,7 +31,7 @@ public class Analyse extends AstBaseVisitor<Void> {
     private final TypeChecker typeChecker;
     private final Map<Node, SymbolTable> nodeSymbolTableMap = new IdentityHashMap<>();
     private SymbolTable curSymbolTable;
-    private ExprVisitor curExprVisitor;
+    private ExprTypeResolver curExprTypeResolver;
 
     public Analyse(AnalyseContext analyseContext) {
         this.globalSymbolTable = analyseContext.getGlobalSymbolTable();
@@ -46,7 +45,7 @@ public class Analyse extends AstBaseVisitor<Void> {
 
     @Override
     public Void visitCallExpr(CallExpr node) {
-        Type calleeType = curExprVisitor.visitExpr(node.getCallee());
+        Type calleeType = curExprTypeResolver.visitExpr(node.getCallee());
         logger.info("node {} {}", calleeType, node.getCallee());
         if (calleeType == null) {
             semanticErrorList.add(node.getPosition(), "Undefined function");
@@ -63,7 +62,7 @@ public class Analyse extends AstBaseVisitor<Void> {
         if (calleeType instanceof OverloadFunctionType) {
             StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
             argumentList.forEach(expr -> {
-                Type type = curExprVisitor.visitExpr(expr);
+                Type type = curExprTypeResolver.visitExpr(expr);
                 stringJoiner.add(type == null ? "null" : type.getName());
             });
             functionType = ((OverloadFunctionType) calleeType).getFunctionType(stringJoiner.toString());
@@ -79,7 +78,7 @@ public class Analyse extends AstBaseVisitor<Void> {
         if (parameterList.size() == argumentList.size()) {
             for (int i = 0; i < parameterList.size(); i++) {
                 Type parameterType = parameterList.get(i).getType();
-                Type argType = curExprVisitor.visitExpr(argumentList.get(i));
+                Type argType = curExprTypeResolver.visitExpr(argumentList.get(i));
                 if (parameterType != null && parameterType != argType) {
                     semanticErrorList.add(
                             argumentList.get(i).getPosition(),
@@ -103,7 +102,7 @@ public class Analyse extends AstBaseVisitor<Void> {
         SymbolTable preSymbolTable = curSymbolTable;
         try {
             curSymbolTable = new SymbolTable(curSymbolTable, curSymbolTable.getNextOffset());
-            curExprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
+            curExprTypeResolver = new ExprTypeResolver(curSymbolTable, semanticErrorList, typeChecker);
             nodeSymbolTableMap.put(node, curSymbolTable);
             logger.info("curSymbolTable and curExprVisitor are updated in visitBlockStmt");
 
@@ -146,7 +145,7 @@ public class Analyse extends AstBaseVisitor<Void> {
         try {
             curSymbolTable = new SymbolTable(prevSymbolTable, 0);
             nodeSymbolTableMap.put(node, curSymbolTable);
-            curExprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
+            curExprTypeResolver = new ExprTypeResolver(curSymbolTable, semanticErrorList, typeChecker);
             logger.info("curSymbolTable and curExprVisitor are updated in visitFunctionDecl");
 
             FunctionType functionType = (FunctionType) functionSymbol.getType();
@@ -193,7 +192,7 @@ public class Analyse extends AstBaseVisitor<Void> {
 
         Expr initializer = node.getInitializer();
         if (initializer != null) {
-            rhsType = curExprVisitor.visitExpr(node.getInitializer());
+            rhsType = curExprTypeResolver.visitExpr(node.getInitializer());
         }
         typeChecker.validateAssign(id, lhsType, rhsType);
 
@@ -205,7 +204,7 @@ public class Analyse extends AstBaseVisitor<Void> {
     @Override
     public Void visitCompilationUnit(CompilationUnit node) {
         curSymbolTable = globalSymbolTable.getGlobal();
-        curExprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
+        curExprTypeResolver = new ExprTypeResolver(curSymbolTable, semanticErrorList, typeChecker);
         logger.info("curSymbolTable and curExprVisitor are updated in visitCompilationUnit");
 
         node.getDeclList().forEach(this::visitDecl);

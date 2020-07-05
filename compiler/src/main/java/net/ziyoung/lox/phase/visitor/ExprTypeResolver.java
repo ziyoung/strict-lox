@@ -1,4 +1,4 @@
-package net.ziyoung.lox.phase.context;
+package net.ziyoung.lox.phase.visitor;
 
 import net.ziyoung.lox.ast.AstBaseVisitor;
 import net.ziyoung.lox.ast.Identifier;
@@ -13,15 +13,15 @@ import net.ziyoung.lox.type.TypeChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExprVisitor extends AstBaseVisitor<Type> {
+public class ExprTypeResolver extends AstBaseVisitor<Type> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExprVisitor.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExprTypeResolver.class);
 
     private final SymbolTable symbolTable;
     private final SemanticErrorList semanticErrorList;
     private final TypeChecker typeChecker;
 
-    public ExprVisitor(SymbolTable symbolTable, SemanticErrorList semanticErrorList, TypeChecker typeChecker) {
+    public ExprTypeResolver(SymbolTable symbolTable, SemanticErrorList semanticErrorList, TypeChecker typeChecker) {
         this.symbolTable = symbolTable;
         this.semanticErrorList = semanticErrorList;
         this.typeChecker = typeChecker;

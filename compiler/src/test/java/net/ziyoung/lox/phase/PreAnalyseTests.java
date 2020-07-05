@@ -2,7 +2,6 @@ package net.ziyoung.lox.phase;
 
 import net.ziyoung.lox.ast.CompilationUnit;
 import net.ziyoung.lox.compiler.Compiler;
-import net.ziyoung.lox.phase.context.AnalyseContext;
 import net.ziyoung.lox.semantic.SemanticError;
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;

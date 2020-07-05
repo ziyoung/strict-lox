@@ -58,7 +58,7 @@ public class FunctionType implements Type {
         return returnType;
     }
 
-    public String getParameterSignature() {
+    public String getParameterDescriptor() {
         StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
         parameterList.forEach(parameter -> stringJoiner.add(parameter.getType().getName()));
         return stringJoiner.toString();
@@ -67,6 +67,12 @@ public class FunctionType implements Type {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getDescriptor() {
+        String returnDescriptor = returnType == null ? "V" : returnType.getDescriptor();
+        return getParameterDescriptor() + returnDescriptor;
     }
 
     @Override

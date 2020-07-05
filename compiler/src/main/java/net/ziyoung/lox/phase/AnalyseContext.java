@@ -1,4 +1,4 @@
-package net.ziyoung.lox.phase.context;
+package net.ziyoung.lox.phase;
 
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
