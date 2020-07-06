@@ -1,17 +1,20 @@
 package net.ziyoung.lox.phase.visitor;
 
 import net.ziyoung.lox.ast.AstBaseVisitor;
+import net.ziyoung.lox.ast.Expr;
 import net.ziyoung.lox.ast.Identifier;
 import net.ziyoung.lox.ast.LiteralType;
 import net.ziyoung.lox.ast.expr.*;
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.Symbol;
 import net.ziyoung.lox.symbol.SymbolTable;
-import net.ziyoung.lox.type.PrimitiveType;
-import net.ziyoung.lox.type.Type;
-import net.ziyoung.lox.type.TypeChecker;
+import net.ziyoung.lox.type.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class ExprTypeResolver extends AstBaseVisitor<Type> {
 
@@ -20,11 +23,31 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
     private final SymbolTable symbolTable;
     private final SemanticErrorList semanticErrorList;
     private final TypeChecker typeChecker;
+    private int stackSize = 0;
 
     public ExprTypeResolver(SymbolTable symbolTable, SemanticErrorList semanticErrorList, TypeChecker typeChecker) {
         this.symbolTable = symbolTable;
         this.semanticErrorList = semanticErrorList;
         this.typeChecker = typeChecker;
+    }
+
+    public int getStackSize() {
+        return stackSize;
+    }
+
+    // Calculate expression stack size.
+    private void updateStackSize(Type type, int factor) {
+        int size = type == null ? 1 : type.getSlotSize();
+        stackSize = Math.max(stackSize, size * factor);
+    }
+
+    // Calculate call expression stack size.
+    private void updateStackSize(List<Type> typeList) {
+        int size = typeList
+                .stream()
+                .map(type -> type == null ? 1 : type.getSlotSize())
+                .reduce(1, Integer::sum);
+        stackSize = Math.max(stackSize, size);
     }
 
     @Override
@@ -44,7 +67,62 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
         if (lhsType != null && lhsType != rhsType) {
             semanticErrorList.add(op.getPosition(), String.format("Invalid operation: mismatched types '%s' and '%s'", lhsType, rhsType));
         }
+        updateStackSize(lhsType, 2);
         return lhsType;
+    }
+
+    @Override
+    public Type visitCallExpr(CallExpr node) {
+        Type calleeType = visitExpr(node.getCallee());
+        logger.info("call expr node {} {}", calleeType, node.getCallee());
+        if (calleeType == null) {
+            semanticErrorList.add(node.getPosition(), "Undefined function");
+            return null;
+        }
+
+        if (!(calleeType instanceof FunctionType || calleeType instanceof OverloadFunctionType)) {
+            semanticErrorList.add(node.getPosition(), "Can only call function or method");
+            return null;
+        }
+
+        List<Expr> argumentList = node.getArgumentList();
+        FunctionType functionType;
+        if (calleeType instanceof OverloadFunctionType) {
+            StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
+            argumentList.forEach(expr -> {
+                Type type = visitExpr(expr);
+                stringJoiner.add(type == null ? "null" : type.getName());
+            });
+            functionType = ((OverloadFunctionType) calleeType).getFunctionType(stringJoiner.toString());
+            if (functionType == null) {
+                semanticErrorList.add(node.getPosition(), "Can't find corresponding function");
+                return null;
+            }
+        } else {
+            functionType = (FunctionType) calleeType;
+        }
+
+        List<FunctionType.Parameter> parameterList = functionType.getParameterList();
+        if (parameterList.size() == argumentList.size()) {
+            for (int i = 0; i < parameterList.size(); i++) {
+                Type parameterType = parameterList.get(i).getType();
+                Type argType = visitExpr(argumentList.get(i));
+                if (parameterType != null && parameterType != argType) {
+                    semanticErrorList.add(
+                            argumentList.get(i).getPosition(),
+                            String.format("Argument of type '%s' is not assignable to parameter of type '%s'", argumentList.get(i), parameterType)
+                    );
+                }
+            }
+        } else {
+            semanticErrorList.add(node.getPosition(), "Unmatched parameter size");
+        }
+
+        List<Type> typeList = parameterList.stream()
+                .map(FunctionType.Parameter::getType)
+                .collect(Collectors.toList());
+        updateStackSize(typeList);
+        return functionType.getReturnType();
     }
 
     @Override
@@ -83,6 +161,7 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
                 throw new RuntimeException("Unsupported type " + literalType);
         }
         node.setEvalType(type);
+        updateStackSize(type, 1);
         return type;
     }
 
@@ -98,7 +177,16 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
 
     @Override
     public Type visitUnaryExpr(UnaryExpr node) {
-        return super.visitUnaryExpr(node);
+        String op = node.getOp().getName();
+        Type rhsType = visitExpr(node.getRhs());
+        if (op.equals("!") && rhsType != PrimitiveType.BOOL) {
+            semanticErrorList.add(node.getPosition(), "Expect boolean after '!'");
+        }
+        if (op.equals("-") && !TypeUtils.isNumeric(rhsType)) {
+            semanticErrorList.add(node.getPosition(), "Expect number after '-'");
+        }
+        updateStackSize(rhsType, 1);
+        return rhsType;
     }
 
     @Override
@@ -108,6 +196,7 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
             semanticErrorList.add(node.getPosition(), String.format("Variable '%s' has not been defined", node.getName()));
             return null;
         }
+        updateStackSize(symbol.getType(), 1);
         logger.info("name {}, symbol {} type {}", node.getName(), symbol, symbol.getType());
         return symbol.getType();
     }

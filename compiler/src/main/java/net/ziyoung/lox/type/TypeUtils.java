@@ -24,4 +24,12 @@ public class TypeUtils {
         return code;
     }
 
+    public static boolean isNumeric(Type type) {
+        if (type == null) {
+            return false;
+        }
+        return type == PrimitiveType.INT || type == PrimitiveType.LONG ||
+                type == PrimitiveType.FLOAT || type == PrimitiveType.DOUBLE;
+    }
+
 }

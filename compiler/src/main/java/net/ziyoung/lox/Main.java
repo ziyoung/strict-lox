@@ -58,7 +58,6 @@ public class Main {
         ClassWriter classWriter = new ClassWriter(0);
         Generate generate = new Generate(analyseContext, nodeSymbolTableMap, classWriter);
         generate.visitCompilationUnit(compilationUnit);
-        classWriter.toByteArray();
 
         if (flag.isGenFile()) {
             String classFileName = String.format("/target/%s.class", compilationUnit.getQualifiedName());

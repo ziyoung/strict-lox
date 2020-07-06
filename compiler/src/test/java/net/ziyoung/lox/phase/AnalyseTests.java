@@ -7,7 +7,9 @@ import net.ziyoung.lox.ast.stmt.BlockStmt;
 import net.ziyoung.lox.ast.stmt.FunctionDecl;
 import net.ziyoung.lox.compiler.Compiler;
 import net.ziyoung.lox.semantic.SemanticErrorList;
+import net.ziyoung.lox.symbol.FunctionSymbol;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
+import net.ziyoung.lox.symbol.Symbol;
 import net.ziyoung.lox.symbol.SymbolTable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -72,5 +74,11 @@ public class AnalyseTests {
             }
         };
         astBaseVisitor.visitCompilationUnit(compilationUnit);
+
+        Symbol symbol = symbolTable.resolve("run");
+        Assertions.assertNotNull(symbol);
+        FunctionSymbol functionSymbol = (FunctionSymbol) symbol;
+        Assertions.assertEquals(3, functionSymbol.getStackSize());
+        Assertions.assertEquals(10, functionSymbol.getLocalSize());
     }
 }

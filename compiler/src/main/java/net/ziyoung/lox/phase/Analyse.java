@@ -1,8 +1,6 @@
 package net.ziyoung.lox.phase;
 
 import net.ziyoung.lox.ast.*;
-import net.ziyoung.lox.ast.expr.AssignExpr;
-import net.ziyoung.lox.ast.expr.CallExpr;
 import net.ziyoung.lox.ast.stmt.*;
 import net.ziyoung.lox.phase.visitor.ExprTypeResolver;
 import net.ziyoung.lox.semantic.SemanticErrorList;
@@ -11,16 +9,13 @@ import net.ziyoung.lox.symbol.GlobalSymbolTable;
 import net.ziyoung.lox.symbol.Symbol;
 import net.ziyoung.lox.symbol.SymbolTable;
 import net.ziyoung.lox.type.FunctionType;
-import net.ziyoung.lox.type.OverloadFunctionType;
 import net.ziyoung.lox.type.Type;
 import net.ziyoung.lox.type.TypeChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 
 public class Analyse extends AstBaseVisitor<Void> {
 
@@ -32,6 +27,7 @@ public class Analyse extends AstBaseVisitor<Void> {
     private final Map<Node, SymbolTable> nodeSymbolTableMap = new IdentityHashMap<>();
     private SymbolTable curSymbolTable;
     private ExprTypeResolver curExprTypeResolver;
+    private FunctionSymbol curFunctionSymbol;
 
     public Analyse(AnalyseContext analyseContext) {
         this.globalSymbolTable = analyseContext.getGlobalSymbolTable();
@@ -43,58 +39,16 @@ public class Analyse extends AstBaseVisitor<Void> {
         return nodeSymbolTableMap;
     }
 
-    @Override
-    public Void visitCallExpr(CallExpr node) {
-        Type calleeType = curExprTypeResolver.visitExpr(node.getCallee());
-        logger.info("node {} {}", calleeType, node.getCallee());
-        if (calleeType == null) {
-            semanticErrorList.add(node.getPosition(), "Undefined function");
-            return null;
-        }
-
-        if (!(calleeType instanceof FunctionType || calleeType instanceof OverloadFunctionType)) {
-            semanticErrorList.add(node.getPosition(), "Can only call function or method");
-            return null;
-        }
-
-        List<Expr> argumentList = node.getArgumentList();
-        FunctionType functionType;
-        if (calleeType instanceof OverloadFunctionType) {
-            StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
-            argumentList.forEach(expr -> {
-                Type type = curExprTypeResolver.visitExpr(expr);
-                stringJoiner.add(type == null ? "null" : type.getName());
-            });
-            functionType = ((OverloadFunctionType) calleeType).getFunctionType(stringJoiner.toString());
-            if (functionType == null) {
-                semanticErrorList.add(node.getPosition(), "Can't find corresponding function");
-                return null;
-            }
-        } else {
-            functionType = (FunctionType) calleeType;
-        }
-        List<FunctionType.Parameter> parameterList = functionType.getParameterList();
-
-        if (parameterList.size() == argumentList.size()) {
-            for (int i = 0; i < parameterList.size(); i++) {
-                Type parameterType = parameterList.get(i).getType();
-                Type argType = curExprTypeResolver.visitExpr(argumentList.get(i));
-                if (parameterType != null && parameterType != argType) {
-                    semanticErrorList.add(
-                            argumentList.get(i).getPosition(),
-                            String.format("Argument of type '%s' is not assignable to parameter of type '%s'", argumentList.get(i), parameterType)
-                    );
-                }
-            }
-        } else {
-            semanticErrorList.add(node.getPosition(), "Unmatched parameter size");
-        }
-        return null;
+    private void updateFunctionStackSize(int size) {
+        int stackSize = curFunctionSymbol.getStackSize();
+        logger.info("size is {} stack size is {}", size, stackSize);
+        curFunctionSymbol.setStackSize(Math.max(stackSize, size));
     }
 
-    @Override
-    public Void visitAssignExpr(AssignExpr node) {
-        return super.visitAssignExpr(node);
+    private void updateFunctionLocalSize(int size) {
+        int localSize = curFunctionSymbol.getLocalSize();
+        logger.info("size is {} local size is {}", size, localSize);
+        curFunctionSymbol.setLocalSize(Math.max(localSize, size));
     }
 
     @Override
@@ -107,6 +61,9 @@ public class Analyse extends AstBaseVisitor<Void> {
             logger.info("curSymbolTable and curExprVisitor are updated in visitBlockStmt");
 
             node.getStmtList().forEach(this::visitStmt);
+
+            updateFunctionStackSize(curExprTypeResolver.getStackSize());
+            updateFunctionLocalSize(curSymbolTable.getNextOffset());
         } finally {
             curSymbolTable = preSymbolTable;
         }
@@ -121,7 +78,7 @@ public class Analyse extends AstBaseVisitor<Void> {
     @Override
     public Void visitExpressionStmt(ExpressionStmt node) {
         if (node.getExpr().usedAsStmt()) {
-            node.getExpr().accept(this);
+            curExprTypeResolver.visitExpr(node.getExpr());
         } else {
             semanticErrorList.add(node.getPosition(), "Expression can't be used as statement");
         }
@@ -141,12 +98,12 @@ public class Analyse extends AstBaseVisitor<Void> {
             throw new RuntimeException("FunctionSymbol is required");
         }
 
+        curFunctionSymbol = functionSymbol;
         SymbolTable prevSymbolTable = curSymbolTable;
         try {
             curSymbolTable = new SymbolTable(prevSymbolTable, 0);
             nodeSymbolTableMap.put(node, curSymbolTable);
             curExprTypeResolver = new ExprTypeResolver(curSymbolTable, semanticErrorList, typeChecker);
-            logger.info("curSymbolTable and curExprVisitor are updated in visitFunctionDecl");
 
             FunctionType functionType = (FunctionType) functionSymbol.getType();
             functionType.getParameterList().forEach(parameter -> {
@@ -156,6 +113,8 @@ public class Analyse extends AstBaseVisitor<Void> {
             visitBlockStmt(node.getBody());
         } finally {
             curSymbolTable = prevSymbolTable;
+            // Rest after visit ends.
+            curFunctionSymbol = null;
         }
         return null;
     }
