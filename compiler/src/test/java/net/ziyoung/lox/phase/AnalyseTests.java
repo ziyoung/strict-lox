@@ -78,7 +78,7 @@ public class AnalyseTests {
         Symbol symbol = symbolTable.resolve("run");
         Assertions.assertNotNull(symbol);
         FunctionSymbol functionSymbol = (FunctionSymbol) symbol;
-        Assertions.assertEquals(3, functionSymbol.getStackSize());
+        Assertions.assertEquals(4, functionSymbol.getStackSize());
         Assertions.assertEquals(10, functionSymbol.getLocalSize());
     }
 }

@@ -12,6 +12,6 @@ fun run(a: int, b: long) {
     var f: float = 123.4;
     var d: double = 123.478;
     var s: string = "Hello, World!";
-    print(d);
+    print(d + f);
     print(i * 2 + 12);
 }

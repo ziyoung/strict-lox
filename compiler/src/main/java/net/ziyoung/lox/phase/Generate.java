@@ -16,6 +16,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class Generate extends AstBaseVisitor<Void> {
 
@@ -52,6 +53,7 @@ public class Generate extends AstBaseVisitor<Void> {
     @Override
     public Void visitFunctionDecl(FunctionDecl node) {
         curSymbolTable = nodeSymbolTableMap.get(node);
+        Objects.requireNonNull(curSymbolTable, "required symbol table for function");
         String name = node.getId().getName();
         Symbol symbol = curSymbolTable.resolve(node.getId().getName());
         curMethodVisitor = classWriter.visitMethod(

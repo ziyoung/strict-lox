@@ -37,8 +37,16 @@ public class BinaryExpr extends Expr {
         return lhsPromotionType;
     }
 
+    public void setLhsPromotionType(Type lhsPromotionType) {
+        this.lhsPromotionType = lhsPromotionType;
+    }
+
     public Type getRhsPromotionType() {
         return rhsPromotionType;
+    }
+
+    public void setRhsPromotionType(Type rhsPromotionType) {
+        this.rhsPromotionType = rhsPromotionType;
     }
 
     @Override

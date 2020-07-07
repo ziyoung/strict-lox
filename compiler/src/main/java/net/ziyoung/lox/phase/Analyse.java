@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Analyse extends AstBaseVisitor<Void> {
 
@@ -94,9 +95,7 @@ public class Analyse extends AstBaseVisitor<Void> {
     public Void visitFunctionDecl(FunctionDecl node) {
         String name = node.getId().getName();
         FunctionSymbol functionSymbol = (FunctionSymbol) curSymbolTable.resolve(name);
-        if (functionSymbol == null) {
-            throw new RuntimeException("FunctionSymbol is required");
-        }
+        Objects.requireNonNull(functionSymbol, "FunctionSymbol is required");
 
         curFunctionSymbol = functionSymbol;
         SymbolTable prevSymbolTable = curSymbolTable;

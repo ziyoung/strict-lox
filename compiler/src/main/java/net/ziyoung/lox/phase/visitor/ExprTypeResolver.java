@@ -63,12 +63,11 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
         Type lhsType = visitExpr(node.getLhs());
         Type rhsType = visitExpr(node.getRhs());
         Identifier op = node.getOp();
-        // TODO: type promotion
-        if (lhsType != null && lhsType != rhsType) {
-            semanticErrorList.add(op.getPosition(), String.format("Invalid operation: mismatched types '%s' and '%s'", lhsType, rhsType));
-        }
-        updateStackSize(lhsType, 2);
-        return lhsType;
+        node.setLhsPromotionType(TypeUtils.getPromoteType(lhsType, rhsType));
+        node.setRhsPromotionType(TypeUtils.getPromoteType(rhsType, lhsType));
+        Type resultType = typeChecker.validateArithmetic(op, lhsType, rhsType);
+        updateStackSize(resultType, 2);
+        return resultType;
     }
 
     @Override
@@ -179,14 +178,9 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
     public Type visitUnaryExpr(UnaryExpr node) {
         String op = node.getOp().getName();
         Type rhsType = visitExpr(node.getRhs());
-        if (op.equals("!") && rhsType != PrimitiveType.BOOL) {
-            semanticErrorList.add(node.getPosition(), "Expect boolean after '!'");
-        }
-        if (op.equals("-") && !TypeUtils.isNumeric(rhsType)) {
-            semanticErrorList.add(node.getPosition(), "Expect number after '-'");
-        }
-        updateStackSize(rhsType, 1);
-        return rhsType;
+        Type resultType = typeChecker.validateUnary(node, op, rhsType);
+        updateStackSize(resultType, 1);
+        return resultType;
     }
 
     @Override
