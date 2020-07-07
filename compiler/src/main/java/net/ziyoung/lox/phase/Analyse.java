@@ -11,6 +11,7 @@ import net.ziyoung.lox.symbol.SymbolTable;
 import net.ziyoung.lox.type.FunctionType;
 import net.ziyoung.lox.type.Type;
 import net.ziyoung.lox.type.TypeChecker;
+import net.ziyoung.lox.type.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,13 +43,11 @@ public class Analyse extends AstBaseVisitor<Void> {
 
     private void updateFunctionStackSize(int size) {
         int stackSize = curFunctionSymbol.getStackSize();
-        logger.info("size is {} stack size is {}", size, stackSize);
         curFunctionSymbol.setStackSize(Math.max(stackSize, size));
     }
 
     private void updateFunctionLocalSize(int size) {
         int localSize = curFunctionSymbol.getLocalSize();
-        logger.info("size is {} local size is {}", size, localSize);
         curFunctionSymbol.setLocalSize(Math.max(localSize, size));
     }
 
@@ -63,6 +62,7 @@ public class Analyse extends AstBaseVisitor<Void> {
 
             node.getStmtList().forEach(this::visitStmt);
 
+            logger.info("curExprTypeResolver stack size {}", curExprTypeResolver.getStackSize());
             updateFunctionStackSize(curExprTypeResolver.getStackSize());
             updateFunctionLocalSize(curSymbolTable.getNextOffset());
         } finally {
@@ -152,8 +152,12 @@ public class Analyse extends AstBaseVisitor<Void> {
         if (initializer != null) {
             rhsType = curExprTypeResolver.visitExpr(node.getInitializer());
         }
-        typeChecker.validateAssign(id, lhsType, rhsType);
 
+        Type promptType = typeChecker.validateAssign(id, lhsType, rhsType);
+        node.setPromptType(promptType);
+        if (!node.isTopLevel()) {
+            updateFunctionStackSize(TypeUtils.getTypeSize(lhsType));
+        }
         Symbol symbol = new Symbol(id.getName(), lhsType);
         curSymbolTable.define(symbol);
         return null;

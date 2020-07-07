@@ -4,11 +4,15 @@ import net.ziyoung.lox.ast.Node;
 import net.ziyoung.lox.ast.TypeNode;
 import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static net.ziyoung.lox.type.PrimitiveType.*;
 import static net.ziyoung.lox.type.PrimitiveType.DOUBLE;
 
 public class TypeChecker {
+
+    private static final Logger logger = LoggerFactory.getLogger(TypeChecker.class);
 
     public final static Type[][] arithmeticResultType = new Type[][]{
             /*          bool int long float double string class*/
@@ -40,14 +44,15 @@ public class TypeChecker {
         return type;
     }
 
-    public void validateAssign(Node node, Type lhsType, Type rhsType) {
+    public Type validateAssign(Node node, Type lhsType, Type rhsType) {
         if (lhsType == null || rhsType == null) {
-            return;
+            return null;
         }
-        // FIXME: support type prompt.
-        if (!lhsType.equals(rhsType)) {
+        Type resultType = arithmeticResultType[lhsType.getIndex()][rhsType.getIndex()];
+        if (resultType == null) {
             semanticErrorList.add(node.getPosition(), String.format("Type '%s' is not assignable to type '%s'", rhsType, lhsType));
         }
+        return TypeUtils.getPromoteType(lhsType, rhsType);
     }
 
     public Type validateArithmetic(Node node, Type lhsType, Type rhsType) {

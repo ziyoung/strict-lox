@@ -21,9 +21,9 @@ public class TypeUtils {
     public final static Type[][] promoteFromTo = new Type[][]{
             /*          bool int long float double string class */
             /* bool */{null, null, null, null, null, null, null},
-            /* int */{null, null, LONG, FLOAT, DOUBLE, null, null},
-            /* long */{null, null, null, null, DOUBLE, null, null},
-            /* float */{null, null, null, null, DOUBLE, null, null},
+            /* int */{null, null, LONG, null, DOUBLE, null, null},
+            /* long */{null, null, null, null, null, null, null},
+            /* float */{null, null, LONG, null, DOUBLE, null, null},
             /* double */{null, null, null, null, null, null, null},
             /* string */{null, null, null, null, null, null, null},
             /* class */{null, null, null, null, null, null, null}
@@ -35,6 +35,10 @@ public class TypeUtils {
             throw new RuntimeException("Function can't be used as a variable");
         }
         return code;
+    }
+
+    public static int getTypeSize(Type type) {
+        return type == null ? 1 : type.getSlotSize();
     }
 
     public static boolean isNumeric(Type type) {

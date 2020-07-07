@@ -37,7 +37,7 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
 
     // Calculate expression stack size.
     private void updateStackSize(Type type, int factor) {
-        int size = type == null ? 1 : type.getSlotSize();
+        int size = TypeUtils.getTypeSize(type);
         stackSize = Math.max(stackSize, size * factor);
     }
 
@@ -45,7 +45,7 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
     private void updateStackSize(List<Type> typeList) {
         int size = typeList
                 .stream()
-                .map(type -> type == null ? 1 : type.getSlotSize())
+                .map(TypeUtils::getTypeSize)
                 .reduce(1, Integer::sum);
         stackSize = Math.max(stackSize, size);
     }
@@ -54,7 +54,8 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
     public Type visitAssignExpr(AssignExpr node) {
         Type lhsType = visitExpr(node.getLhs());
         Type rhsType = visitExpr(node.getRhs());
-        typeChecker.validateAssign(node.getLhs(), lhsType, rhsType);
+        Type promptType = typeChecker.validateAssign(node, lhsType, rhsType);
+        node.setRhsPromotionType(promptType);
         return lhsType;
     }
 
@@ -191,7 +192,6 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
             return null;
         }
         updateStackSize(symbol.getType(), 1);
-        logger.info("name {}, symbol {} type {}", node.getName(), symbol, symbol.getType());
         return symbol.getType();
     }
 }
