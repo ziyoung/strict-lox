@@ -40,6 +40,10 @@ public class SymbolTable {
         return null;
     }
 
+    public boolean contains(String name) {
+        return symbolMap.get(name) != null;
+    }
+
     public int getNextOffset() {
         return nextOffset;
     }
@@ -50,8 +54,7 @@ public class SymbolTable {
         symbolMap.values().forEach(symbol -> stringBuilder
                 .append("\t- ")
                 .append(symbol.getName())
-                .append(": ")
-                .append(symbol.getName())
+                .append("\n")
         );
         return stringBuilder.toString();
     }

@@ -75,10 +75,15 @@ public class AnalyseTests {
         };
         astBaseVisitor.visitCompilationUnit(compilationUnit);
 
-        Symbol symbol = symbolTable.resolve("run");
-        Assertions.assertNotNull(symbol);
-        FunctionSymbol functionSymbol = (FunctionSymbol) symbol;
+        FunctionSymbol functionSymbol = (FunctionSymbol) symbolTable.resolve("run");
+        Assertions.assertNotNull(functionSymbol);
         Assertions.assertEquals(4, functionSymbol.getStackSize());
         Assertions.assertEquals(10, functionSymbol.getLocalSize());
+
+        FunctionSymbol functionSymbol1 = (FunctionSymbol) symbolTable.resolve("<clinit>");
+        Assertions.assertNotNull(functionSymbol1);
+        Assertions.assertEquals(2, functionSymbol1.getStackSize());
+        // For <clinit>, there's no local vars.
+        Assertions.assertEquals(-1, functionSymbol1.getLocalSize());
     }
 }

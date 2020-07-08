@@ -54,11 +54,12 @@ public class Analyse extends AstBaseVisitor<Void> {
     @Override
     public Void visitBlockStmt(BlockStmt node) {
         SymbolTable preSymbolTable = curSymbolTable;
+        ExprTypeResolver prevExprTypeResolver = curExprTypeResolver;
         try {
             curSymbolTable = new SymbolTable(curSymbolTable, curSymbolTable.getNextOffset());
             curExprTypeResolver = new ExprTypeResolver(curSymbolTable, semanticErrorList, typeChecker);
             nodeSymbolTableMap.put(node, curSymbolTable);
-            logger.info("curSymbolTable and curExprVisitor are updated in visitBlockStmt");
+            logger.info("visitBlockStmt: curSymbolTable and curExprVisitor are updated");
 
             node.getStmtList().forEach(this::visitStmt);
 
@@ -67,6 +68,7 @@ public class Analyse extends AstBaseVisitor<Void> {
             updateFunctionLocalSize(curSymbolTable.getNextOffset());
         } finally {
             curSymbolTable = preSymbolTable;
+            curExprTypeResolver = prevExprTypeResolver;
         }
         return null;
     }
@@ -99,10 +101,13 @@ public class Analyse extends AstBaseVisitor<Void> {
 
         curFunctionSymbol = functionSymbol;
         SymbolTable prevSymbolTable = curSymbolTable;
+        ExprTypeResolver prevExprTypeResolver = curExprTypeResolver;
+
         try {
             curSymbolTable = new SymbolTable(prevSymbolTable, 0);
             nodeSymbolTableMap.put(node, curSymbolTable);
             curExprTypeResolver = new ExprTypeResolver(curSymbolTable, semanticErrorList, typeChecker);
+            logger.info("visitFunctionDecl: curSymbolTable and curExprVisitor are updated");
 
             FunctionType functionType = (FunctionType) functionSymbol.getType();
             functionType.getParameterList().forEach(parameter -> {
@@ -112,8 +117,8 @@ public class Analyse extends AstBaseVisitor<Void> {
             visitBlockStmt(node.getBody());
         } finally {
             curSymbolTable = prevSymbolTable;
-            // Rest after visit ends.
             curFunctionSymbol = null;
+            curExprTypeResolver = prevExprTypeResolver;
         }
         return null;
     }
@@ -141,7 +146,7 @@ public class Analyse extends AstBaseVisitor<Void> {
     @Override
     public Void visitVariableDecl(VariableDecl node) {
         Identifier id = node.getId();
-        if (curSymbolTable.resolve(id.getName()) != null) {
+        if (curSymbolTable.contains(id.getName())) {
             semanticErrorList.add(id.getPosition(), String.format("Variable %s has been declared", id.getName()));
         }
 
@@ -158,6 +163,7 @@ public class Analyse extends AstBaseVisitor<Void> {
         if (!node.isTopLevel()) {
             updateFunctionStackSize(TypeUtils.getTypeSize(lhsType));
         }
+        curExprTypeResolver.updateStackSize(lhsType);
         Symbol symbol = new Symbol(id.getName(), lhsType);
         curSymbolTable.define(symbol);
         return null;
@@ -167,9 +173,15 @@ public class Analyse extends AstBaseVisitor<Void> {
     public Void visitCompilationUnit(CompilationUnit node) {
         curSymbolTable = globalSymbolTable.getGlobal();
         curExprTypeResolver = new ExprTypeResolver(curSymbolTable, semanticErrorList, typeChecker);
-        logger.info("curSymbolTable and curExprVisitor are updated in visitCompilationUnit");
+        logger.info("visitCompilationUnit: curSymbolTable and curExprVisitor are updated");
 
         node.getDeclList().forEach(this::visitDecl);
+
+        FunctionType functionType = new FunctionType("<clinit>", null);
+        FunctionSymbol functionSymbol = new FunctionSymbol("<clinit>", functionType);
+        functionSymbol.setStackSize(curExprTypeResolver.getStackSize());
+        functionSymbol.setLocalSize(curSymbolTable.getNextOffset());
+        curSymbolTable.define(functionSymbol);
         return null;
     }
 }

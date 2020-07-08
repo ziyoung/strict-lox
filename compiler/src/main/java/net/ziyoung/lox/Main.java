@@ -25,7 +25,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Flag flag = new Flag(args);
         flag.parse();
-        if (flag.isPassed()) {
+        if (!flag.isPassed()) {
             return;
         }
 
@@ -60,8 +60,12 @@ public class Main {
         generate.visitCompilationUnit(compilationUnit);
 
         if (flag.isGenFile()) {
-            String classFileName = String.format("/target/%s.class", compilationUnit.getQualifiedName());
-            try (OutputStream outputStream = new FileOutputStream(classFileName)) {
+            String classFileName = String.format("%s.class", compilationUnit.getQualifiedName());
+            File file = new File(classFileName);
+            if (file.createNewFile()) {
+                System.out.println("create class file");
+            }
+            try (OutputStream outputStream = new FileOutputStream(file)) {
                 outputStream.write(classWriter.toByteArray());
             }
         }

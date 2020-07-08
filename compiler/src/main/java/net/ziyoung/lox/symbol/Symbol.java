@@ -30,8 +30,8 @@ public class Symbol {
         return offset;
     }
 
-    public int getLoadCode() {
-        return TypeUtils.getVarLoadCode(type);
+    public boolean isStaticField() {
+        return offset == -1;
     }
 
     public String getDescriptor() {

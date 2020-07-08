@@ -36,6 +36,10 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
     }
 
     // Calculate expression stack size.
+    public void updateStackSize(Type type) {
+        updateStackSize(type, 1);
+    }
+
     private void updateStackSize(Type type, int factor) {
         int size = TypeUtils.getTypeSize(type);
         stackSize = Math.max(stackSize, size * factor);

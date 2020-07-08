@@ -18,6 +18,7 @@ public class Flag {
             return;
         }
         for (String arg : args) {
+            System.out.println("args " + arg);
             if ("-inspect".equals(arg)) {
                 inspect = true;
                 continue;

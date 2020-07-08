@@ -18,6 +18,18 @@ public class TypeUtils {
             Opcodes.ALOAD  // null
     };
 
+    private final static int[] varStoreCodes = new int[]{
+            Opcodes.ISTORE, // bool
+            Opcodes.ISTORE, // int
+            Opcodes.LSTORE, // long
+            Opcodes.FSTORE, // float
+            Opcodes.DSTORE, // double
+            Opcodes.ASTORE, // string
+            -1,            // function
+            Opcodes.ASTORE, // class
+            Opcodes.ASTORE  // null
+    };
+
     public final static Type[][] promoteFromTo = new Type[][]{
             /*          bool int long float double string class */
             /* bool */{null, null, null, null, null, null, null},
@@ -33,6 +45,14 @@ public class TypeUtils {
         int code = varLoadCodes[type.getIndex()];
         if (code == -1) {
             throw new RuntimeException("Function can't be used as a variable");
+        }
+        return code;
+    }
+
+    public static int getStoreVarCode(Type type) {
+        int code = varStoreCodes[type.getIndex()];
+        if (code == -1) {
+            throw new RuntimeException("Function can't be assigned to a variable");
         }
         return code;
     }
