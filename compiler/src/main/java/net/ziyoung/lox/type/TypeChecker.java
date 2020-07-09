@@ -7,23 +7,11 @@ import net.ziyoung.lox.symbol.GlobalSymbolTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static net.ziyoung.lox.type.PrimitiveType.*;
-import static net.ziyoung.lox.type.PrimitiveType.DOUBLE;
+import static net.ziyoung.lox.type.PrimitiveType.BOOL;
 
 public class TypeChecker {
 
     private static final Logger logger = LoggerFactory.getLogger(TypeChecker.class);
-
-    public final static Type[][] arithmeticResultType = new Type[][]{
-            /*          bool int long float double string class*/
-            /* bool */{null, null, null, null, null, null, null},
-            /* int */{null, INT, LONG, FLOAT, DOUBLE, null, null},
-            /* long */{null, LONG, LONG, null, DOUBLE, null, null},
-            /* float */{null, FLOAT, null, FLOAT, DOUBLE, null, null},
-            /* double */{null, DOUBLE, DOUBLE, DOUBLE, DOUBLE, null, null},
-            /* string */{null, null, null, null, null, null, null},
-            /* class */{null, null, null, null, null, null, null}
-    };
 
     private final GlobalSymbolTable globalSymbolTable;
     private final SemanticErrorList semanticErrorList;
@@ -48,18 +36,18 @@ public class TypeChecker {
         if (lhsType == null || rhsType == null) {
             return null;
         }
-        Type resultType = arithmeticResultType[lhsType.getIndex()][rhsType.getIndex()];
+        Type resultType = TypeUtils.getAssignType(lhsType, rhsType);
         if (resultType == null) {
             semanticErrorList.add(node.getPosition(), String.format("Type '%s' is not assignable to type '%s'", rhsType, lhsType));
         }
-        return TypeUtils.getPromoteType(lhsType, rhsType);
+        return TypeUtils.getPromoteType(rhsType, lhsType);
     }
 
     public Type validateArithmetic(Node node, Type lhsType, Type rhsType) {
         if (lhsType == null || rhsType == null) {
             return null;
         }
-        Type resultType = arithmeticResultType[lhsType.getIndex()][rhsType.getIndex()];
+        Type resultType = TypeUtils.getArithmeticType(lhsType, rhsType);
         if (resultType == null) {
             semanticErrorList.add(node.getPosition(), String.format("Invalid operation: mismatched types '%s' and '%s'", lhsType, rhsType));
         }

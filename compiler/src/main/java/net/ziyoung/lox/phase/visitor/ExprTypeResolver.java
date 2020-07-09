@@ -72,6 +72,7 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
         node.setRhsPromotionType(TypeUtils.getPromoteType(rhsType, lhsType));
         Type resultType = typeChecker.validateArithmetic(op, lhsType, rhsType);
         updateStackSize(resultType, 2);
+        node.setEvalType(resultType);
         return resultType;
     }
 

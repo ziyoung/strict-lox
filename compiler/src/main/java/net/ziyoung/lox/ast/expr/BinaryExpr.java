@@ -14,6 +14,7 @@ public class BinaryExpr extends Expr {
     private final Expr rhs;
     private Type lhsPromotionType;
     private Type rhsPromotionType;
+    private Type evalType;
 
     public BinaryExpr(Expr lhs, Identifier op, Expr rhs) {
         this.lhs = lhs;
@@ -47,6 +48,14 @@ public class BinaryExpr extends Expr {
 
     public void setRhsPromotionType(Type rhsPromotionType) {
         this.rhsPromotionType = rhsPromotionType;
+    }
+
+    public Type getEvalType() {
+        return evalType;
+    }
+
+    public void setEvalType(Type evalType) {
+        this.evalType = evalType;
     }
 
     @Override
