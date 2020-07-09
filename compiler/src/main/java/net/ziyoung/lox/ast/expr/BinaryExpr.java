@@ -14,6 +14,7 @@ public class BinaryExpr extends Expr {
     private final Expr rhs;
     private Type lhsPromotionType;
     private Type rhsPromotionType;
+    private Type evalType;
 
     public BinaryExpr(Expr lhs, Identifier op, Expr rhs) {
         this.lhs = lhs;
@@ -37,8 +38,24 @@ public class BinaryExpr extends Expr {
         return lhsPromotionType;
     }
 
+    public void setLhsPromotionType(Type lhsPromotionType) {
+        this.lhsPromotionType = lhsPromotionType;
+    }
+
     public Type getRhsPromotionType() {
         return rhsPromotionType;
+    }
+
+    public void setRhsPromotionType(Type rhsPromotionType) {
+        this.rhsPromotionType = rhsPromotionType;
+    }
+
+    public Type getEvalType() {
+        return evalType;
+    }
+
+    public void setEvalType(Type evalType) {
+        this.evalType = evalType;
     }
 
     @Override
@@ -49,5 +66,10 @@ public class BinaryExpr extends Expr {
     @Override
     public Map<String, String> getProperties() {
         return updateNodeKind("BinaryExpression");
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %s", lhs, op.getName(), rhs);
     }
 }

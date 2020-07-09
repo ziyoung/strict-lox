@@ -1,14 +1,10 @@
 package net.ziyoung.lox.flag;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class Flag {
-    private static final Logger logger = LoggerFactory.getLogger(Flag.class);
 
+    private final String[] args;
     private String fileName;
     private boolean inspect;
-    private final String[] args;
     private boolean passed = false;
 
     public Flag(String[] args) {
@@ -17,10 +13,11 @@ public class Flag {
 
     public void parse() {
         if (args.length == 0) {
-            logger.error("no arguments");
+            System.err.println("no arguments");
             return;
         }
         for (String arg : args) {
+            System.out.println("args " + arg);
             if ("-inspect".equals(arg)) {
                 inspect = true;
                 continue;
@@ -30,11 +27,11 @@ public class Flag {
             }
         }
         if (fileName == null) {
-            logger.error("file name is required");
+            System.err.println("file name is required");
             return;
         }
         if (!fileName.endsWith(".lox")) {
-            logger.error("file name should end width .lox");
+            System.err.println("file name should end width .lox");
             return;
         }
         passed = true;
@@ -43,7 +40,6 @@ public class Flag {
     public String getFileName() {
         return fileName;
     }
-
 
     public boolean isInspect() {
         return inspect;

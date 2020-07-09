@@ -7,10 +7,11 @@ var d: double = 123.478;
 var s: string = "Hello, World!";
 
 fun run(a: int, b: long) {
-    var i: int = 456;
+    var i: int = 456 + 890;
     var l: long = 129393;
     var f: float = 123.4;
     var d: double = 123.478;
     var s: string = "Hello, World!";
-    print(d);
+    print(d + f);
+    print(i * 2 + 12);
 }

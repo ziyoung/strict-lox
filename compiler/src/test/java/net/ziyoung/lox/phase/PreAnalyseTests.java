@@ -2,6 +2,8 @@ package net.ziyoung.lox.phase;
 
 import net.ziyoung.lox.ast.CompilationUnit;
 import net.ziyoung.lox.compiler.Compiler;
+import net.ziyoung.lox.semantic.SemanticError;
+import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -20,14 +22,17 @@ public class PreAnalyseTests {
         CompilationUnit compilationUnit = Assertions.assertDoesNotThrow(compiler::parse);
         GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
         SemanticErrorList semanticErrorList = new SemanticErrorList();
-        PreAnalyse preAnalyse = new PreAnalyse(globalSymbolTable, semanticErrorList);
+        AnalyseContext analyseContext = new AnalyseContext(globalSymbolTable, semanticErrorList);
+        PreAnalyse preAnalyse = new PreAnalyse(analyseContext);
         preAnalyse.visitCompilationUnit(compilationUnit);
 
         String[] names = new String[]{
-                "X", "Y", "Z", // fun main
+                "X", "Y", "Z", // fun t
                 "i", "j" // fun dup
         };
-        List<String> errorList = semanticErrorList.stream().collect(Collectors.toList());
+        List<String> errorList = semanticErrorList.stream()
+                .map(SemanticError::toString)
+                .collect(Collectors.toList());
         Assertions.assertEquals(names.length, errorList.size());
 
         for (ListIterator<String> iterator = errorList.listIterator(); iterator.hasNext(); ) {

@@ -18,6 +18,13 @@ public class CompilationUnit extends Node {
         return packageName;
     }
 
+    public String getQualifiedName() {
+        if (packageName.length() == 1) {
+            return packageName.toUpperCase();
+        }
+        return packageName.substring(0, 1).toUpperCase() + packageName.substring(1);
+    }
+
     public List<Decl> getDeclList() {
         return declList;
     }

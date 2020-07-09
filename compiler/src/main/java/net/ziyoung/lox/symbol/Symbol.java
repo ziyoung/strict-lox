@@ -1,6 +1,7 @@
 package net.ziyoung.lox.symbol;
 
 import net.ziyoung.lox.type.Type;
+import net.ziyoung.lox.type.TypeUtils;
 
 public class Symbol {
     private final String name;
@@ -27,5 +28,17 @@ public class Symbol {
 
     public int getOffset() {
         return offset;
+    }
+
+    public boolean isStaticField() {
+        return offset == -1;
+    }
+
+    public boolean isFunction() {
+        return false;
+    }
+
+    public String getDescriptor() {
+        return type.getDescriptor();
     }
 }

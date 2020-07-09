@@ -38,4 +38,9 @@ public class CallExpr extends Expr {
     public Map<String, String> getProperties() {
         return updateNodeKind("CallExpression");
     }
+
+    @Override
+    public String toString() {
+        return callee.toString() + "()";
+    }
 }

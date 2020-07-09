@@ -1,24 +1,23 @@
 package net.ziyoung.lox.phase;
 
 import net.ziyoung.lox.ast.*;
-import net.ziyoung.lox.ast.expr.AssignExpr;
-import net.ziyoung.lox.ast.expr.CallExpr;
 import net.ziyoung.lox.ast.stmt.*;
+import net.ziyoung.lox.phase.visitor.ExprTypeResolver;
+import net.ziyoung.lox.semantic.SemanticErrorList;
 import net.ziyoung.lox.symbol.FunctionSymbol;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
 import net.ziyoung.lox.symbol.Symbol;
 import net.ziyoung.lox.symbol.SymbolTable;
 import net.ziyoung.lox.type.FunctionType;
-import net.ziyoung.lox.type.OverloadFunctionType;
 import net.ziyoung.lox.type.Type;
 import net.ziyoung.lox.type.TypeChecker;
+import net.ziyoung.lox.type.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
+import java.util.Objects;
 
 public class Analyse extends AstBaseVisitor<Void> {
 
@@ -29,84 +28,47 @@ public class Analyse extends AstBaseVisitor<Void> {
     private final TypeChecker typeChecker;
     private final Map<Node, SymbolTable> nodeSymbolTableMap = new IdentityHashMap<>();
     private SymbolTable curSymbolTable;
-    private ExprVisitor curExprVisitor;
+    private ExprTypeResolver curExprTypeResolver;
+    private FunctionSymbol curFunctionSymbol;
 
-    public Analyse(GlobalSymbolTable globalSymbolTable, SemanticErrorList semanticErrorList, TypeChecker typeChecker) {
-        this.globalSymbolTable = globalSymbolTable;
-        this.semanticErrorList = semanticErrorList;
-        this.typeChecker = typeChecker;
+    public Analyse(AnalyseContext analyseContext) {
+        this.globalSymbolTable = analyseContext.getGlobalSymbolTable();
+        this.semanticErrorList = analyseContext.getSemanticErrorList();
+        this.typeChecker = analyseContext.getTypeChecker();
     }
 
     public Map<Node, SymbolTable> getNodeSymbolTableMap() {
         return nodeSymbolTableMap;
     }
 
-    @Override
-    public Void visitCallExpr(CallExpr node) {
-        Type calleeType = curExprVisitor.visitExpr(node.getCallee());
-        logger.info("node {} {}", calleeType, node.getCallee());
-        if (calleeType == null) {
-            semanticErrorList.add(node.getPosition(), "Undefined function");
-            return null;
-        }
-
-        if (!(calleeType instanceof FunctionType || calleeType instanceof OverloadFunctionType)) {
-            semanticErrorList.add(node.getPosition(), "Can only call function or method");
-            return null;
-        }
-
-        List<Expr> argumentList = node.getArgumentList();
-        FunctionType functionType;
-        if (calleeType instanceof OverloadFunctionType) {
-            StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
-            argumentList.forEach(expr -> {
-                Type type = curExprVisitor.visitExpr(expr);
-                stringJoiner.add(type == null ? "null" : type.getName());
-            });
-            functionType = ((OverloadFunctionType) calleeType).getFunctionType(stringJoiner.toString());
-            if (functionType == null) {
-                semanticErrorList.add(node.getPosition(), "Can't find corresponding function");
-                return null;
-            }
-        } else {
-            functionType = (FunctionType) calleeType;
-        }
-        List<FunctionType.Parameter> parameterList = functionType.getParameterList();
-
-        if (parameterList.size() == argumentList.size()) {
-            for (int i = 0; i < parameterList.size(); i++) {
-                Type parameterType = parameterList.get(i).getType();
-                Type argType = curExprVisitor.visitExpr(argumentList.get(i));
-                if (parameterType != null && parameterType != argType) {
-                    semanticErrorList.add(
-                            argumentList.get(i).getPosition(),
-                            String.format("Argument of type '%s' is not assignable to parameter of type '%s'", argumentList.get(i), parameterType)
-                    );
-                }
-            }
-        } else {
-            semanticErrorList.add(node.getPosition(), "Unmatched parameter size");
-        }
-        return null;
+    private void updateFunctionStackSize(int size) {
+        int stackSize = curFunctionSymbol.getStackSize();
+        curFunctionSymbol.setStackSize(Math.max(stackSize, size));
     }
 
-    @Override
-    public Void visitAssignExpr(AssignExpr node) {
-        return super.visitAssignExpr(node);
+    private void updateFunctionLocalSize(int size) {
+        int localSize = curFunctionSymbol.getLocalSize();
+        curFunctionSymbol.setLocalSize(Math.max(localSize, size));
     }
 
     @Override
     public Void visitBlockStmt(BlockStmt node) {
         SymbolTable preSymbolTable = curSymbolTable;
+        ExprTypeResolver prevExprTypeResolver = curExprTypeResolver;
         try {
             curSymbolTable = new SymbolTable(curSymbolTable, curSymbolTable.getNextOffset());
-            curExprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
+            curExprTypeResolver = new ExprTypeResolver(curSymbolTable, semanticErrorList, typeChecker);
             nodeSymbolTableMap.put(node, curSymbolTable);
-            logger.info("curSymbolTable and curExprVisitor are updated in visitBlockStmt");
+            logger.info("visitBlockStmt: curSymbolTable and curExprVisitor are updated");
 
             node.getStmtList().forEach(this::visitStmt);
+
+            logger.info("curExprTypeResolver stack size {}", curExprTypeResolver.getStackSize());
+            updateFunctionStackSize(curExprTypeResolver.getStackSize());
+            updateFunctionLocalSize(curSymbolTable.getNextOffset());
         } finally {
             curSymbolTable = preSymbolTable;
+            curExprTypeResolver = prevExprTypeResolver;
         }
         return null;
     }
@@ -119,7 +81,7 @@ public class Analyse extends AstBaseVisitor<Void> {
     @Override
     public Void visitExpressionStmt(ExpressionStmt node) {
         if (node.getExpr().usedAsStmt()) {
-            node.getExpr().accept(this);
+            curExprTypeResolver.visitExpr(node.getExpr());
         } else {
             semanticErrorList.add(node.getPosition(), "Expression can't be used as statement");
         }
@@ -135,16 +97,19 @@ public class Analyse extends AstBaseVisitor<Void> {
     public Void visitFunctionDecl(FunctionDecl node) {
         String name = node.getId().getName();
         FunctionSymbol functionSymbol = (FunctionSymbol) curSymbolTable.resolve(name);
-        if (functionSymbol == null) {
-            throw new RuntimeException("FunctionSymbol is required");
-        }
+        Objects.requireNonNull(functionSymbol, "FunctionSymbol is required");
 
+        curFunctionSymbol = functionSymbol;
         SymbolTable prevSymbolTable = curSymbolTable;
+        ExprTypeResolver prevExprTypeResolver = curExprTypeResolver;
+
         try {
-            curSymbolTable = new SymbolTable(prevSymbolTable, 0);
+            // FIXME: use a better way.
+            int initOffset = name.equals("main") ? 1 : 0;
+            curSymbolTable = new SymbolTable(prevSymbolTable, initOffset);
             nodeSymbolTableMap.put(node, curSymbolTable);
-            curExprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
-            logger.info("curSymbolTable and curExprVisitor are updated in visitFunctionDecl");
+            curExprTypeResolver = new ExprTypeResolver(curSymbolTable, semanticErrorList, typeChecker);
+            logger.info("visitFunctionDecl: curSymbolTable and curExprVisitor are updated");
 
             FunctionType functionType = (FunctionType) functionSymbol.getType();
             functionType.getParameterList().forEach(parameter -> {
@@ -154,6 +119,8 @@ public class Analyse extends AstBaseVisitor<Void> {
             visitBlockStmt(node.getBody());
         } finally {
             curSymbolTable = prevSymbolTable;
+            curFunctionSymbol = null;
+            curExprTypeResolver = prevExprTypeResolver;
         }
         return null;
     }
@@ -181,8 +148,8 @@ public class Analyse extends AstBaseVisitor<Void> {
     @Override
     public Void visitVariableDecl(VariableDecl node) {
         Identifier id = node.getId();
-        if (curSymbolTable.resolve(id.getName()) != null) {
-            semanticErrorList.add(id.getPosition(), id.getName() + " has been declared");
+        if (curSymbolTable.contains(id.getName())) {
+            semanticErrorList.add(id.getPosition(), String.format("Variable %s has been declared", id.getName()));
         }
 
         Type lhsType = typeChecker.check(node.getTypeNode());
@@ -190,10 +157,15 @@ public class Analyse extends AstBaseVisitor<Void> {
 
         Expr initializer = node.getInitializer();
         if (initializer != null) {
-            rhsType = curExprVisitor.visitExpr(node.getInitializer());
+            rhsType = curExprTypeResolver.visitExpr(node.getInitializer());
         }
-        typeChecker.validateAssign(id, lhsType, rhsType);
 
+        Type promptType = typeChecker.validateAssign(id, lhsType, rhsType);
+        node.setPromptType(promptType);
+        if (!node.isTopLevel()) {
+            updateFunctionStackSize(TypeUtils.getTypeSize(lhsType));
+        }
+        curExprTypeResolver.updateStackSize(lhsType);
         Symbol symbol = new Symbol(id.getName(), lhsType);
         curSymbolTable.define(symbol);
         return null;
@@ -202,10 +174,17 @@ public class Analyse extends AstBaseVisitor<Void> {
     @Override
     public Void visitCompilationUnit(CompilationUnit node) {
         curSymbolTable = globalSymbolTable.getGlobal();
-        curExprVisitor = new ExprVisitor(curSymbolTable, semanticErrorList, typeChecker);
-        logger.info("curSymbolTable and curExprVisitor are updated in visitCompilationUnit");
+        curExprTypeResolver = new ExprTypeResolver(curSymbolTable, semanticErrorList, typeChecker);
+        logger.info("visitCompilationUnit: curSymbolTable and curExprVisitor are updated");
 
         node.getDeclList().forEach(this::visitDecl);
+
+        FunctionType functionType = new FunctionType("<clinit>", null);
+        String curClass = node.getQualifiedName();
+        FunctionSymbol functionSymbol = new FunctionSymbol("<clinit>", curClass, true, functionType);
+        functionSymbol.setStackSize(curExprTypeResolver.getStackSize());
+        functionSymbol.setLocalSize(curSymbolTable.getNextOffset());
+        curSymbolTable.define(functionSymbol);
         return null;
     }
 }

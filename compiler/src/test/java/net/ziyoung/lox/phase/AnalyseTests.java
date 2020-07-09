@@ -6,9 +6,11 @@ import net.ziyoung.lox.ast.Node;
 import net.ziyoung.lox.ast.stmt.BlockStmt;
 import net.ziyoung.lox.ast.stmt.FunctionDecl;
 import net.ziyoung.lox.compiler.Compiler;
+import net.ziyoung.lox.semantic.SemanticErrorList;
+import net.ziyoung.lox.symbol.FunctionSymbol;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
+import net.ziyoung.lox.symbol.Symbol;
 import net.ziyoung.lox.symbol.SymbolTable;
-import net.ziyoung.lox.type.TypeChecker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,11 +27,11 @@ public class AnalyseTests {
 
         GlobalSymbolTable globalSymbolTable = new GlobalSymbolTable();
         SemanticErrorList semanticErrorList = new SemanticErrorList();
-        PreAnalyse preAnalyse = new PreAnalyse(globalSymbolTable, semanticErrorList);
+        AnalyseContext analyseContext = new AnalyseContext(globalSymbolTable, semanticErrorList);
+        PreAnalyse preAnalyse = new PreAnalyse(analyseContext);
         preAnalyse.visitCompilationUnit(compilationUnit);
 
-        TypeChecker typeChecker = new TypeChecker(globalSymbolTable, semanticErrorList);
-        Analyse analyse = new Analyse(globalSymbolTable, semanticErrorList, typeChecker);
+        Analyse analyse = new Analyse(analyseContext);
         analyse.visitCompilationUnit(compilationUnit);
 
         String[] names = new String[]{"i", "l", "f", "d", "s"};
@@ -72,5 +74,16 @@ public class AnalyseTests {
             }
         };
         astBaseVisitor.visitCompilationUnit(compilationUnit);
+
+        FunctionSymbol functionSymbol = (FunctionSymbol) symbolTable.resolve("run");
+        Assertions.assertNotNull(functionSymbol);
+        Assertions.assertEquals(4, functionSymbol.getStackSize());
+        Assertions.assertEquals(10, functionSymbol.getLocalSize());
+
+        FunctionSymbol functionSymbol1 = (FunctionSymbol) symbolTable.resolve("<clinit>");
+        Assertions.assertNotNull(functionSymbol1);
+        Assertions.assertEquals(2, functionSymbol1.getStackSize());
+        // For <clinit>, there's no local vars.
+        Assertions.assertEquals(-1, functionSymbol1.getLocalSize());
     }
 }

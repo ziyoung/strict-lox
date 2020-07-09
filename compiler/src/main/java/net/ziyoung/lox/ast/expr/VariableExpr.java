@@ -27,4 +27,9 @@ public class VariableExpr extends Expr {
     public Map<String, String> getProperties() {
         return updateNodeKind("Variable");
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

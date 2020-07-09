@@ -1,0 +1,6 @@
+package Hello;
+
+fun main() {
+    var s: string = "Hello, World";
+    print(s);
+}

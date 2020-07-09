@@ -16,7 +16,23 @@ Function or method can't be used as a return value. Also, closure is not support
 
 ```shell script
 mvn install && mvn package
-cd compiler
-java -jar ./target/compiler-1.0-SNAPSHOT-shaded.jar ./test.lox
+cp ./compiler/target/compiler-1.0-SNAPSHOT-shaded.jar ./exmaple
+
+# compile
+java -jar compiler-1.0-SNAPSHOT-shaded.jar Hello.lox
+
+# run
+java Hello
 ```
 
+## TODO
+
+- [x] Hello World
+- [x] Arithmetic
+- [ ] String Concat
+- [ ] If Statement
+- [ ] For Statement
+- [ ] Return Statement
+- [ ] Class & Custom Type
+- [ ] Instance Method
+- [ ] null

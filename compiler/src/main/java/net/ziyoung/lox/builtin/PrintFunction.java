@@ -19,7 +19,7 @@ public class PrintFunction {
     }
 
     private static FunctionType getPrintFunction(Type type) {
-        FunctionType functionType = new FunctionType("print_" + type.getName(), null);
+        FunctionType functionType = new FunctionType("print", null);
         functionType.addArg("arg0", type);
         return functionType;
     }

@@ -174,11 +174,12 @@ RETURN: 'return';
 CONTINUE: 'continue';
 BREAK: 'break';
 
-Less: '<';
-LessEqual: '<=';
-Greater: '>';
-GreaterEqual: '>=';
+Less : '<';
+LessEqual : '<=';
+Greater : '>';
+GreaterEqual : '>=';
 Equal : '==';
+Exclamation : '!';
 NotEqual : '!=';
 
 Plus : '+';
