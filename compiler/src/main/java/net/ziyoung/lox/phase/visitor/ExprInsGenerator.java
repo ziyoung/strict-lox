@@ -2,15 +2,16 @@ package net.ziyoung.lox.phase.visitor;
 
 import net.ziyoung.lox.ast.AstBaseVisitor;
 import net.ziyoung.lox.ast.expr.*;
+import net.ziyoung.lox.symbol.FunctionSymbol;
 import net.ziyoung.lox.symbol.Symbol;
 import net.ziyoung.lox.symbol.SymbolTable;
-import net.ziyoung.lox.type.PrimitiveType;
-import net.ziyoung.lox.type.Type;
-import net.ziyoung.lox.type.TypeUtils;
+import net.ziyoung.lox.type.*;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.StringJoiner;
 
 public class ExprInsGenerator extends AstBaseVisitor<Type> {
 
@@ -76,7 +77,42 @@ public class ExprInsGenerator extends AstBaseVisitor<Type> {
 
     @Override
     public Type visitCallExpr(CallExpr node) {
-        return super.visitCallExpr(node);
+        Type type = visitExpr(node.getCallee());
+        StringJoiner stringJoiner = new StringJoiner(",", "(", ")");
+        node.getArgumentList()
+                .forEach(expr -> {
+                    Type type1 = visitExpr(expr);
+                    stringJoiner.add(type1.getName());
+                });
+        FunctionType functionType;
+        if (type instanceof OverloadFunctionType) {
+            OverloadFunctionType overloadFunctionType = (OverloadFunctionType) type;
+            functionType = overloadFunctionType.getFunctionType(stringJoiner.toString());
+        } else {
+            functionType = (FunctionType) type;
+        }
+        // FIXME: there's only static method now.
+        String functionName = functionType.getName();
+        FunctionSymbol functionSymbol = (FunctionSymbol) curSymbolTable.resolve(functionName);
+        // FIXME: use a better way.
+        if (functionName.equals("print")) {
+            curMethodVisitor.visitMethodInsn(
+                    Opcodes.INVOKEVIRTUAL,
+                    functionSymbol.getOwnerClass(),
+                    "println",
+                    functionType.getDescriptor(),
+                    false
+            );
+        } else {
+            curMethodVisitor.visitMethodInsn(
+                    Opcodes.INVOKESTATIC,
+                    ownerClass,
+                    functionName,
+                    functionType.getDescriptor(),
+                    false
+            );
+        }
+        return null;
     }
 
     @Override
@@ -108,11 +144,21 @@ public class ExprInsGenerator extends AstBaseVisitor<Type> {
     @Override
     public Type visitVariableExpr(VariableExpr node) {
         Symbol symbol = curSymbolTable.resolve(node.getName());
-        if (symbol.isStaticField()) {
-            curMethodVisitor.visitFieldInsn(Opcodes.GETSTATIC, ownerClass, symbol.getName(), symbol.getDescriptor());
+        if (symbol.isFunction()) {
+            FunctionSymbol functionSymbol = (FunctionSymbol) symbol;
+            logger.info("get callee {}", functionSymbol.getName());
+            // FIXME: use a better way.
+            if (functionSymbol.getName().equals("print")) {
+                String descriptor = "L" + functionSymbol.getOwnerClass() + ";";
+                curMethodVisitor.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", descriptor);
+            }
         } else {
-            int op = TypeUtils.getVarLoadCode(symbol.getType());
-            curMethodVisitor.visitVarInsn(op, symbol.getOffset());
+            if (symbol.isStaticField()) {
+                curMethodVisitor.visitFieldInsn(Opcodes.GETSTATIC, ownerClass, symbol.getName(), symbol.getDescriptor());
+            } else {
+                int op = TypeUtils.getVarLoadCode(symbol.getType());
+                curMethodVisitor.visitVarInsn(op, symbol.getOffset());
+            }
         }
         return symbol.getType();
     }

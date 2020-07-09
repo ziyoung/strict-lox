@@ -5,7 +5,6 @@ public class Flag {
     private final String[] args;
     private String fileName;
     private boolean inspect;
-    private boolean genFile = false;
     private boolean passed = false;
 
     public Flag(String[] args) {
@@ -26,9 +25,6 @@ public class Flag {
             if (!arg.startsWith("-") && fileName == null) {
                 fileName = arg;
             }
-            if ("-generate".equals(arg)) {
-                genFile = true;
-            }
         }
         if (fileName == null) {
             System.err.println("file name is required");
@@ -45,13 +41,8 @@ public class Flag {
         return fileName;
     }
 
-
     public boolean isInspect() {
         return inspect;
-    }
-
-    public boolean isGenFile() {
-        return genFile;
     }
 
     public boolean isPassed() {

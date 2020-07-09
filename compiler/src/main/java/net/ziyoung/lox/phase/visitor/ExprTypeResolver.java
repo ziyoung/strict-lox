@@ -46,11 +46,11 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
     }
 
     // Calculate call expression stack size.
-    private void updateStackSize(List<Type> typeList) {
+    private void updateStackSize(List<Type> typeList, int base) {
         int size = typeList
                 .stream()
                 .map(TypeUtils::getTypeSize)
-                .reduce(1, Integer::sum);
+                .reduce(base, Integer::sum);
         stackSize = Math.max(stackSize, size);
     }
 
@@ -126,7 +126,8 @@ public class ExprTypeResolver extends AstBaseVisitor<Type> {
         List<Type> typeList = parameterList.stream()
                 .map(FunctionType.Parameter::getType)
                 .collect(Collectors.toList());
-        updateStackSize(typeList);
+        int baseSize = functionType.getName().equals("print") ? 1 : 0;
+        updateStackSize(typeList, baseSize);
         return functionType.getReturnType();
     }
 

@@ -4,10 +4,7 @@ import net.ziyoung.lox.ast.AstBaseVisitor;
 import net.ziyoung.lox.ast.CompilationUnit;
 import net.ziyoung.lox.ast.Expr;
 import net.ziyoung.lox.ast.Node;
-import net.ziyoung.lox.ast.stmt.BlockStmt;
-import net.ziyoung.lox.ast.stmt.Decl;
-import net.ziyoung.lox.ast.stmt.FunctionDecl;
-import net.ziyoung.lox.ast.stmt.VariableDecl;
+import net.ziyoung.lox.ast.stmt.*;
 import net.ziyoung.lox.phase.visitor.ExprInsGenerator;
 import net.ziyoung.lox.symbol.FunctionSymbol;
 import net.ziyoung.lox.symbol.GlobalSymbolTable;
@@ -36,6 +33,7 @@ public class Generate extends AstBaseVisitor<Void> {
     private final ClassWriter classWriter;
     private SymbolTable curSymbolTable;
     private MethodVisitor curMethodVisitor;
+    private ExprInsGenerator curExprInsGenerator;
     private String curOwnerClass = "";
 
     public Generate(AnalyseContext analyseContext, Map<Node, SymbolTable> nodeSymbolTableMap, ClassWriter classWriter) {
@@ -125,27 +123,45 @@ public class Generate extends AstBaseVisitor<Void> {
         Objects.requireNonNull(curSymbolTable, "Required symbol table for function");
         String name = node.getId().getName();
         FunctionSymbol functionSymbol = (FunctionSymbol) curSymbolTable.resolve(node.getId().getName());
+        // FIXME: use a better way
+        String descriptor = name.equals("main") ? "([Ljava/lang/String;)V" : functionSymbol.getDescriptor();
         curMethodVisitor = classWriter.visitMethod(
                 Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                 name,
-                functionSymbol.getDescriptor(),
+                descriptor,
                 null,
                 null
         );
+        curExprInsGenerator = new ExprInsGenerator(curSymbolTable, curMethodVisitor, curOwnerClass);
+
         curMethodVisitor.visitCode();
         visitBlockStmt(node.getBody());
+        curMethodVisitor.visitInsn(Opcodes.RETURN);
         curMethodVisitor.visitMaxs(functionSymbol.getStackSize(), functionSymbol.getLocalSize());
         curMethodVisitor.visitEnd();
+
         curMethodVisitor = null;
+        curExprInsGenerator = null;
         return null;
     }
 
     @Override
     public Void visitBlockStmt(BlockStmt node) {
         SymbolTable prevSymbolTable = curSymbolTable;
+        ExprInsGenerator prevExprInsGenerator = curExprInsGenerator;
+
         curSymbolTable = nodeSymbolTableMap.get(node);
+        curExprInsGenerator = new ExprInsGenerator(curSymbolTable, curMethodVisitor, curOwnerClass);
         node.getStmtList().forEach(this::visitStmt);
+
         curSymbolTable = prevSymbolTable;
+        curExprInsGenerator = prevExprInsGenerator;
+        return null;
+    }
+
+    @Override
+    public Void visitExpressionStmt(ExpressionStmt node) {
+        curExprInsGenerator.visitExpr(node.getExpr());
         return null;
     }
 
@@ -165,11 +181,10 @@ public class Generate extends AstBaseVisitor<Void> {
         } else {
             Symbol symbol = curSymbolTable.resolve(node.getId().getName());
             Expr initializer = node.getInitializer();
-            ExprInsGenerator insGenerator = new ExprInsGenerator(curSymbolTable, curMethodVisitor, curOwnerClass);
             if (initializer == null) {
-                insGenerator.genDefaultInitializer(symbol.getType());
+                curExprInsGenerator.genDefaultInitializer(symbol.getType());
             } else {
-                Type type = insGenerator.visitExpr(initializer);
+                Type type = curExprInsGenerator.visitExpr(initializer);
                 if (node.getPromptType() != null) {
                     curMethodVisitor.visitInsn(TypeUtils.getCastCode(type, node.getPromptType()));
                 }

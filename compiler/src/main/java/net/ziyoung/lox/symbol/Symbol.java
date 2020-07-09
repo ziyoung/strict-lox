@@ -34,6 +34,10 @@ public class Symbol {
         return offset == -1;
     }
 
+    public boolean isFunction() {
+        return false;
+    }
+
     public String getDescriptor() {
         return type.getDescriptor();
     }

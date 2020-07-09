@@ -27,7 +27,7 @@ public class PreAnalyseTests {
         preAnalyse.visitCompilationUnit(compilationUnit);
 
         String[] names = new String[]{
-                "X", "Y", "Z", // fun main
+                "X", "Y", "Z", // fun t
                 "i", "j" // fun dup
         };
         List<String> errorList = semanticErrorList.stream()

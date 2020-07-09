@@ -18,7 +18,7 @@ public class OverloadFunctionType implements Type {
 
     public FunctionType getFunctionType(String signature) {
         return functionTypeList.stream()
-                .filter(functionType1 -> functionType1.getParameterDescriptor().equals(signature))
+                .filter(functionType1 -> functionType1.getParameterListName().equals(signature))
                 .findFirst()
                 .orElse(null);
     }

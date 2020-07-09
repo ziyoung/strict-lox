@@ -59,15 +59,13 @@ public class Main {
         Generate generate = new Generate(analyseContext, nodeSymbolTableMap, classWriter);
         generate.visitCompilationUnit(compilationUnit);
 
-        if (flag.isGenFile()) {
-            String classFileName = String.format("%s.class", compilationUnit.getQualifiedName());
-            File file = new File(classFileName);
-            if (file.createNewFile()) {
-                System.out.println("create class file");
-            }
-            try (OutputStream outputStream = new FileOutputStream(file)) {
-                outputStream.write(classWriter.toByteArray());
-            }
+        String classFileName = String.format("%s.class", compilationUnit.getQualifiedName());
+        File file = new File(classFileName);
+        if (file.createNewFile()) {
+            System.out.println("create class file");
+        }
+        try (OutputStream outputStream = new FileOutputStream(file)) {
+            outputStream.write(classWriter.toByteArray());
         }
 
     }

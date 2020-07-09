@@ -1,0 +1,8 @@
+package Arithmetic;
+
+fun main() {
+    var i: double = 123;
+    var j: int = 12234 + 989;
+    print(i);
+    print(j);
+}

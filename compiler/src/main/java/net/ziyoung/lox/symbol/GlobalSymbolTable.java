@@ -19,7 +19,13 @@ public class GlobalSymbolTable {
             typeMap.put(type.getName(), type);
         }
         global = new SymbolTable(null);
-        defineSymbol(new FunctionSymbol("print", PrintFunction.functionTypeList));
+        FunctionSymbol functionSymbol = new FunctionSymbol(
+                "print",
+                "java/io/PrintStream",
+                true,
+                PrintFunction.functionTypeList
+        );
+        defineSymbol(functionSymbol);
     }
 
     public void defineType(Type type) {

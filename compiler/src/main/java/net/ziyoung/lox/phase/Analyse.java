@@ -104,7 +104,9 @@ public class Analyse extends AstBaseVisitor<Void> {
         ExprTypeResolver prevExprTypeResolver = curExprTypeResolver;
 
         try {
-            curSymbolTable = new SymbolTable(prevSymbolTable, 0);
+            // FIXME: use a better way.
+            int initOffset = name.equals("main") ? 1 : 0;
+            curSymbolTable = new SymbolTable(prevSymbolTable, initOffset);
             nodeSymbolTableMap.put(node, curSymbolTable);
             curExprTypeResolver = new ExprTypeResolver(curSymbolTable, semanticErrorList, typeChecker);
             logger.info("visitFunctionDecl: curSymbolTable and curExprVisitor are updated");
@@ -178,7 +180,8 @@ public class Analyse extends AstBaseVisitor<Void> {
         node.getDeclList().forEach(this::visitDecl);
 
         FunctionType functionType = new FunctionType("<clinit>", null);
-        FunctionSymbol functionSymbol = new FunctionSymbol("<clinit>", functionType);
+        String curClass = node.getQualifiedName();
+        FunctionSymbol functionSymbol = new FunctionSymbol("<clinit>", curClass, true, functionType);
         functionSymbol.setStackSize(curExprTypeResolver.getStackSize());
         functionSymbol.setLocalSize(curSymbolTable.getNextOffset());
         curSymbolTable.define(functionSymbol);
